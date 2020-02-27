@@ -6,7 +6,7 @@ import android.view.View
 import com.aoihosizora.mp3tagseditor.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IContextHelper {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,8 +14,13 @@ class MainActivity : AppCompatActivity() {
         initView()
     }
 
-    fun initView() {
+    private fun initView() {
         view_divider.visibility = View.GONE
         ll_second.visibility = View.GONE
+        btn_open.setOnClickListener(onBtnOpenClicked)
+    }
+
+    private val onBtnOpenClicked: (View) -> Unit = {
+
     }
 }
