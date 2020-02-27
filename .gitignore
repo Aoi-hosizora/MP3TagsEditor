@@ -1,0 +1,15 @@
+### Android Studio ###
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+### My ###
+.idea/
+.vscode/
+.history/
+.ionide/
