@@ -4,15 +4,18 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.R
 import kotlinx.android.synthetic.main.activity_main.*
 import rx_activity_result2.RxActivityResult
+import java.io.File
 import kotlin.system.exitProcess
 
 
@@ -48,6 +51,8 @@ class MainActivity : AppCompatActivity(), IContextHelper {
         btn_open.setOnClickListener(onBtnOpenClicked)
         btn_close.setOnClickListener(onBtnCloseClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
+        btn_play_pause.setOnClickListener(onBtnPlayPauseClicked)
+        seekbar.setOnSeekBarChangeListener(onSeekBarChange)
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
@@ -69,14 +74,131 @@ class MainActivity : AppCompatActivity(), IContextHelper {
 
     private val onBtnCloseClicked: (View) -> Unit = {
         initView(false)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
     }
 
     private val onBtnSaveClicked: (View) -> Unit = {
         showToast("save")
     }
 
+    private val mediaPlayer = MediaPlayer()
+
+    /**
+     * Is seeking?
+     */
+    private var isChanging = false
+
+    override fun onPause() { // hide or locked
+        super.onPause()
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
+    }
+
+    override fun onDestroy() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
+        mediaPlayer.release()
+        super.onDestroy()
+    }
+
+    private val looperThread = Runnable {
+        var curr: Int
+        while (!isChanging && mediaPlayer.isPlaying) {
+            curr = mediaPlayer.currentPosition
+            if (curr < mediaPlayer.duration) {
+                runOnUiThread {
+                    seekbar.progress = curr
+                    updateProgress(mediaPlayer.currentPosition, mediaPlayer.duration)
+                }
+                try {
+                    Thread.sleep(100)
+                } catch (ex: InterruptedException) {
+                    ex.printStackTrace()
+                }
+            } else {
+                break
+            }
+        }
+    }
+
+    private val onSeekBarChange = object : SeekBar.OnSeekBarChangeListener {
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            isChanging = true
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            mediaPlayer.seekTo(seekbar.progress)
+            isChanging = false
+            Thread(looperThread).start()
+        }
+
+        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+            updateProgress(progress, mediaPlayer.duration)
+        }
+    }
+
     private fun loadMusic(uri: Uri) {
-        txt_file.text = String.format("Opening %s", uri.path)
+        uri.path?.let {
+            val filename = it.split(File.separator).last()
+            val mb = File(it).length() / 1024 / 1024.0
+            txt_file.text = String.format("Opening: %s (%.2fMB)", filename, mb)
+        }
+        try {
+            mediaPlayer.setDataSource(this, uri)
+            mediaPlayer.prepare()
+        } catch (ex: Exception) {
+            showAlert("Failed", "Failed to prepare music file.")
+            return
+        }
+        mediaPlayer.setOnCompletionListener { btnPlayIcon() }
+        mediaPlayer.start()
+        seekbar.max = mediaPlayer.duration
+        seekbar.progress = mediaPlayer.currentPosition
+        Thread(looperThread).start()
+        btnPauseIcon()
+    }
+
+    private fun updateProgress(position: Int, du: Int) {
+        val func: (Int) -> String = a@{
+            val allSeconds = it / 1000
+            val hour = allSeconds / 3600
+            val minute = allSeconds % 3600 / 60
+            val second = allSeconds % 60
+            return@a if (hour == 0) {
+                String.format("%02d:%02d", minute, second)
+            } else {
+                String.format("%02d:%02d:%02d", hour, minute, second)
+            }
+        }
+        txt_music.text = String.format("%s / %s", func(position), func(du))
+    }
+
+    private val onBtnPlayPauseClicked: (View) -> Unit = {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        } else {
+            mediaPlayer.start()
+            Thread(looperThread).start()
+        }
+
+        if (mediaPlayer.isPlaying) {
+            btnPlayIcon()
+        } else {
+            btnPauseIcon()
+        }
+    }
+
+    private fun btnPlayIcon() {
+        btn_play_pause.setImageResource(R.drawable.ic_play_accent_24dp)
+    }
+
+    private fun btnPauseIcon() {
+        btn_play_pause.setImageResource(R.drawable.ic_pause_accent_24dp)
     }
 
     private fun checkPermission() {
