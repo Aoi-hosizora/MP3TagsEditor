@@ -5,15 +5,196 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_marginLeft="@dimen/pageMarginHorizontal"
+    android:layout_marginTop="@dimen/pageMarginVertical"
+    android:layout_marginRight="@dimen/pageMarginHorizontal"
+    android:layout_marginBottom="@dimen/pageMarginVertical"
+    tools:context=".ui.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_first"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:divider="@drawable/spacer_medium"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txt_file"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="File not open"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btn_open"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open file"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/view_divider"
+        layout="@layout/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/itemSpaceVertical"
+        app:layout_constraintTop_toBottomOf="@id/ll_first" />
+
+    <LinearLayout
+        android:id="@+id/ll_second"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/itemSpaceVertical"
+        android:divider="@drawable/spacer_medium"
+        android:orientation="vertical"
+        android:showDividers="middle"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/view_divider">
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Song title"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText">
+
+            </EditText>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_artist"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Artist"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_artist"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Song artist"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText">
+
+            </EditText>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_album"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Album"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_album"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Song album"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText">
+
+            </EditText>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_cover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_cover"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Cover"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_cover"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Replace"
+                android:textAllCaps="false"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_cover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="cover"
+            android:src="@drawable/ic_launcher_background"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Save"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
