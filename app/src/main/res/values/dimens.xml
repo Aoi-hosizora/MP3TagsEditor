@@ -2,8 +2,8 @@
 <resources>
     <dimen name="pageMarginHorizontal">12dp</dimen>
     <dimen name="pageMarginVertical">6dp</dimen>
-    <dimen name="itemSpaceHorizontal">12dp</dimen>
-    <dimen name="itemSpaceVertical">6dp</dimen>
+    <dimen name="itemSpaceHorizontal">4dp</dimen>
+    <dimen name="itemSpaceVertical">4dp</dimen>
 
     <dimen name="settingLabelWidth">45dp</dimen>
 </resources>

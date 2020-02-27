@@ -81,7 +81,7 @@ interface IContextHelper {
             title = title, view = edt,
             posText = posText,
             posListener = DialogInterface.OnClickListener { dialogInterface, i ->
-                run { posClick(dialogInterface, i, edt.text.toString()) }
+                posClick(dialogInterface, i, edt.text.toString())
             },
             negText = negText, negListener = negListener
         )

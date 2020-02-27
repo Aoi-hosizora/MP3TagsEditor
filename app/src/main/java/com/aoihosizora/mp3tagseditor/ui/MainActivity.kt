@@ -14,13 +14,33 @@ class MainActivity : AppCompatActivity(), IContextHelper {
         initView()
     }
 
-    private fun initView() {
-        view_divider.visibility = View.GONE
-        ll_second.visibility = View.GONE
+    private fun initView(hasFile: Boolean = false) {
+        val def = if (hasFile) View.VISIBLE else View.GONE
+        val vis = if (!hasFile) View.VISIBLE else View.GONE
+
+        txt_open.visibility = vis
+        btn_open.visibility = vis
+        txt_file.visibility = def
+        btn_close.visibility = def
+        view_divide_head.visibility = def
+        ll_main.visibility = def
+        view_divide_bottom.visibility = def
+        ll_bottom.visibility = def
+
         btn_open.setOnClickListener(onBtnOpenClicked)
+        btn_close.setOnClickListener(onBtnCloseClicked)
+        btn_save.setOnClickListener(onBtnSaveClicked)
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
+        initView(true)
+    }
 
+    private val onBtnCloseClicked: (View) -> Unit = {
+        initView(false)
+    }
+
+    private val onBtnSaveClicked: (View) -> Unit = {
+        showToast("save")
     }
 }
