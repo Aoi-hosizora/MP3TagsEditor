@@ -1,6 +1,15 @@
 # MP3 Tags Editor
 
-+ Edit mp3 file's ID3 tags in Android MVP
++ Edit mp3 file's ID3v2.3 tags in Android MVP
+
+### Functions
+
++ [x] Read and write title, artist, album
++ [x] Load and write cover(jpg)
++ [ ] Support other tag
++ [ ] Edit and save cover
++ [ ] Cut music
++ [ ] Convert video to mp3
 
 ### Environments
 
@@ -11,7 +20,10 @@
 ### Dependencies
 
 + [mp3agic](https://github.com/mpatric/mp3agic)
-+ [anko](https://github.com/Kotlin/anko)
+
+### Screenshot
+ 
+![Screenshot](./assets/Screenshot.jpg)
 
 ### References
 
