@@ -10,56 +10,59 @@ class MainActivityPresenter(
 ) : MainActivityContract.Presenter {
 
     private var isChanging = false
-    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun setup(context: Context, uri: Uri) {
         mediaPlayer = MediaPlayer()
-        mediaPlayer.setDataSource(context, uri)
-        mediaPlayer.prepare()
-        mediaPlayer.setOnCompletionListener {
-            view.switchBtnIcon(false)
-        }
-    }
-
-    override fun switch() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
-            view.switchBtnIcon(false)
-        } else {
-            mediaPlayer.start()
-            view.switchBtnIcon(true)
-            Thread(looperThread).start()
+        mediaPlayer?.let {
+            it.setDataSource(context, uri)
+            it.prepare()
+            it.setOnCompletionListener {
+                view.switchBtnIcon(false)
+            }
         }
     }
 
     override fun play() {
-        if (!mediaPlayer.isPlaying) {
-            mediaPlayer.start()
-            view.switchBtnIcon(true)
-            Thread(looperThread).start()
+        mediaPlayer?.let {
+            if (!it.isPlaying) {
+                it.start()
+                view.switchBtnIcon(true)
+                Thread(looperThread).start()
+            }
         }
     }
 
     override fun pause() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
-            view.switchBtnIcon(false)
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                view.switchBtnIcon(false)
+            }
         }
     }
 
     override fun stop() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-            view.switchBtnIcon(false)
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+                view.switchBtnIcon(false)
+            }
+        }
+    }
+
+    override fun switch() {
+        if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
+            pause()
+        } else {
+            play()
         }
     }
 
     override fun release() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-            view.switchBtnIcon(false)
-        }
-        mediaPlayer.release()
+        stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private fun parseProgress(progress: Int): String {
@@ -75,9 +78,9 @@ class MainActivityPresenter(
     }
 
     private val looperThread = Runnable {
-        while (!isChanging && mediaPlayer.isPlaying) {
-            val curr = mediaPlayer.currentPosition
-            val du = mediaPlayer.duration
+        while (!isChanging && mediaPlayer != null && mediaPlayer!!.isPlaying) {
+            val curr = mediaPlayer!!.currentPosition
+            val du = mediaPlayer!!.duration
             if (curr < du) {
                 view.runOnUiThread(Runnable {
                     view.setupSeekbar(curr, du)
@@ -99,12 +102,16 @@ class MainActivityPresenter(
     }
 
     override fun seekStop(progress: Int) {
-        mediaPlayer.seekTo(progress)
-        isChanging = false
-        Thread(looperThread).start()
+        mediaPlayer?.let {
+            it.seekTo(progress)
+            isChanging = false
+            Thread(looperThread).start()
+        }
     }
 
     override fun seekChanging(progress: Int) {
-        view.updateSeekbar(parseProgress(progress), parseProgress(mediaPlayer.duration))
+        mediaPlayer?.let {
+            view.updateSeekbar(parseProgress(progress), parseProgress(it.duration))
+        }
     }
 }
