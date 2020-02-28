@@ -10,7 +10,8 @@
 
 ### Dependencies
 
-+ [com.mpatric:mp3agic](https://github.com/mpatric/mp3agic)
++ [mp3agic](https://github.com/mpatric/mp3agic)
++ [anko](https://github.com/Kotlin/anko)
 
 ### References
 
