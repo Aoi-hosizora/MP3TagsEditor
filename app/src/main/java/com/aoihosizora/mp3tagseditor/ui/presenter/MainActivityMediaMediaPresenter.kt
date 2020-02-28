@@ -78,22 +78,26 @@ class MainActivityMediaMediaPresenter(
     }
 
     private val looperThread = Runnable {
-        while (!isChanging && mediaPlayer != null && mediaPlayer!!.isPlaying) {
-            val curr = mediaPlayer!!.currentPosition
-            val du = mediaPlayer!!.duration
-            if (curr < du) {
-                view.runOnUiThread(Runnable {
-                    view.setupSeekbar(curr, du)
-                    view.updateSeekbar(parseProgress(curr), parseProgress(du))
-                })
-                try {
-                    Thread.sleep(100)
-                } catch (ex: InterruptedException) {
-                    ex.printStackTrace()
+        try {
+            while (!isChanging && mediaPlayer != null && mediaPlayer!!.isPlaying) {
+                val curr = mediaPlayer!!.currentPosition
+                val du = mediaPlayer!!.duration
+                if (curr < du) {
+                    view.runOnUiThread(Runnable {
+                        view.setupSeekbar(curr, du)
+                        view.updateSeekbar(parseProgress(curr), parseProgress(du))
+                    })
+                    try {
+                        Thread.sleep(100)
+                    } catch (ex: InterruptedException) {
+                        ex.printStackTrace()
+                    }
+                } else {
+                    break
                 }
-            } else {
-                break
             }
+        } catch (ex: IllegalStateException) {
+            ex.printStackTrace() // android.media.MediaPlayer.isPlaying(Native Method)
         }
     }
 

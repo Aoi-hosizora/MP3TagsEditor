@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -24,11 +25,10 @@ import rx_activity_result2.RxActivityResult
 import java.io.File
 import kotlin.system.exitProcess
 
-
 class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.View {
 
-    override val mediaPresenter: MainActivityContract.MediaPresenter = MainActivityMediaMediaPresenter(this)
-    override val tagsPresenter: MainActivityContract.TagsPresenter = MainActivityTagsPresenter(this)
+    override val mediaPresenter = MainActivityMediaMediaPresenter(this)
+    override val tagsPresenter = MainActivityTagsPresenter(this)
 
     companion object {
         private val ALL_PERMISSION = listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -59,10 +59,12 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
         btn_open.setOnClickListener(onBtnOpenClicked)
         btn_close.setOnClickListener(onBtnCloseClicked)
-        btn_play_pause.setOnClickListener(onBtnPlayPauseClicked)
+        btn_switch.setOnClickListener(onBtnSwitchClicked)
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
 
+        btn_cover.setOnClickListener(onBtnCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
+        btn_restore.setOnClickListener(onBtnRestoreClicked)
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         initView(false)
     }
 
-    private val onBtnPlayPauseClicked: (View) -> Unit = {
+    private val onBtnSwitchClicked: (View) -> Unit = {
         mediaPresenter.switch()
     }
 
@@ -105,7 +107,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             mediaPresenter.setup(this, uri)
             mediaPresenter.play()
         } catch (ex: Exception) {
+            ex.printStackTrace()
             showAlert("Failed", "Failed to prepare music file.")
+            initView(false)
         }
     }
 
@@ -145,9 +149,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     override fun switchBtnIcon(isPlaying: Boolean) {
         if (isPlaying) {
-            btn_play_pause.setImageResource(R.drawable.ic_pause_accent_24dp)
+            btn_switch.setImageResource(R.drawable.ic_pause_accent_24dp)
         } else {
-            btn_play_pause.setImageResource(R.drawable.ic_play_accent_24dp)
+            btn_switch.setImageResource(R.drawable.ic_play_accent_24dp)
         }
     }
 
@@ -160,14 +164,44 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
             bm_cover.setImageBitmap(cover)
-            txt_cover_size.text = String.format("%dKB", cover.allocationByteCount)
+            txt_cover_size.text = String.format("%dx%d %dKB", cover.width, cover.height, cover.allocationByteCount / 1024)
         } else {
             bm_cover.setImageResource(R.drawable.ic_launcher_background)
         }
     }
 
+    private val onBtnCoverClicked: (View) -> Unit = {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+            if (r.resultCode() == Activity.RESULT_OK) {
+                r.data().data?.let {
+                    bm_cover.setImageURI(it)
+                }
+            }
+        }
+    }
+
+    private val onBtnRestoreClicked: (View) -> Unit = {
+        tagsPresenter.restore()
+    }
+
     private val onBtnSaveClicked: (View) -> Unit = {
-        tagsPresenter.save(edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(bm_cover))
+        val filename = tagsPresenter.getFilename()
+        showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
+            if (text == filename) {
+                showAlert("Failed", "New filename couldn't be the same")
+            } else {
+                try {
+                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(bm_cover))
+                    showAlert("Success", String.format("Success to save %s.", text))
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    String.format("Failed", String.format("Failed to save %s.", text))
+                }
+            }
+        }, negText = "Cancel")
     }
 
     private fun checkPermission() {

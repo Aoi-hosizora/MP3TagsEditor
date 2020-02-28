@@ -4,12 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
-import java.nio.ByteBuffer
-
+import java.io.ByteArrayOutputStream
 
 object CoverUtil {
 
-    fun getBitmapFromByteArray(arr: ByteArray): Bitmap {
+    fun getBitmapFromByteArray(arr: ByteArray): Bitmap? {
         return BitmapFactory.decodeByteArray(arr, 0, arr.size)
     }
 
@@ -17,10 +16,9 @@ object CoverUtil {
         return (im.drawable as BitmapDrawable).bitmap
     }
 
-    fun getByteArrayFromBitmap(bm: Bitmap): ByteArray {
-        val bytes = bm.byteCount
-        val buf = ByteBuffer.allocate(bytes)
-        bm.copyPixelsToBuffer(buf)
-        return buf.array()
+    fun getJpegByteArrayFromBitmap(bm: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return stream.toByteArray()
     }
 }

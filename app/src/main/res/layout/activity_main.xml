@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Opening: %s"
+            android:textIsSelectable="true"
             tools:ignore="HardcodedText" />
 
         <Button
@@ -78,7 +79,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/btn_play_pause"
+            android:id="@+id/btn_switch"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -197,7 +198,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="0KB"
+                android:text="0x0 0KB"
                 tools:ignore="HardcodedText" />
 
             <Button

@@ -13,3 +13,5 @@
 + [com.mpatric:mp3agic](https://github.com/mpatric/mp3agic)
 
 ### References
+
++ [cannot access Path class file for java.nio.file.Path not found](https://github.com/mpatric/mp3agic/issues/141)

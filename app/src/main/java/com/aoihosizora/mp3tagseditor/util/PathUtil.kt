@@ -18,10 +18,10 @@ object PathUtil {
 
         // 1. file://
         if (uri.scheme == ContentResolver.SCHEME_FILE) {
-            return uri.path!!
+            return uri.path ?: ""
         }
 
-        // 2. content://media
+        // 2. content://media/external/images/media/222 < 4.4
         if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
             val path = getDataColumn(context, uri)
             if (path.isNotBlank()) {
@@ -29,7 +29,7 @@ object PathUtil {
             }
         }
 
-        // 3.content://com.android.providers.media
+        // 3. content://com.android.providers.media.documents/document/image%3A235700 >= 4.4
         if (uri.scheme == ContentResolver.SCHEME_CONTENT && DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) { // ExternalStorageProvider
                 val docId = DocumentsContract.getDocumentId(uri)
@@ -61,7 +61,7 @@ object PathUtil {
     }
 
     private fun getDataColumn(context: Context, uri: Uri, selection: String? = null, selectionArgs: Array<String>? = null): String {
-        val column = MediaStore.Audio.Media.DATA
+        val column = "_data" // MediaStore.Audio.Media.DATA
         val cursor = context.contentResolver.query(uri, arrayOf(column), selection, selectionArgs, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -81,14 +81,14 @@ object PathUtil {
     }
 
     private fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" == uri.authority
+        return uri.authority == "com.android.externalstorage.documents"
     }
 
     private fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" == uri.authority
+        return uri.authority == "com.android.providers.downloads.documents"
     }
 
     private fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" == uri.authority
+        return uri.authority == "com.android.providers.media.documents"
     }
 }

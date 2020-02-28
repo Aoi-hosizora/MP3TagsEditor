@@ -3,6 +3,7 @@ package com.aoihosizora.mp3tagseditor.ui.contract
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import com.mpatric.mp3agic.ID3v2
 
 interface MainActivityContract {
 
@@ -38,6 +39,8 @@ interface MainActivityContract {
         val view: View
 
         fun load(path: String)
-        fun save(title: String, artist: String, album: String, cover: Bitmap?)
+        fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?)
+        fun getFilename(): String
+        fun restore()
     }
 }
