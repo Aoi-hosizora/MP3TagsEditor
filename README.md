@@ -1,6 +1,6 @@
 # MP3 Tags Editor
 
-+ Edit mp3 file's ID3 tags in Android
++ Edit mp3 file's ID3 tags in Android MVP
 
 ### Environments
 

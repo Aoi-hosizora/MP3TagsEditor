@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -14,17 +15,20 @@ import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
-import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityPresenter
+import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaMediaPresenter
+import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityTagsPresenter
+import com.aoihosizora.mp3tagseditor.util.CoverUtil
+import com.aoihosizora.mp3tagseditor.util.PathUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import rx_activity_result2.RxActivityResult
 import java.io.File
-import java.lang.Exception
 import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.View {
 
-    override val presenter: MainActivityContract.Presenter = MainActivityPresenter(this)
+    override val mediaPresenter: MainActivityContract.MediaPresenter = MainActivityMediaMediaPresenter(this)
+    override val tagsPresenter: MainActivityContract.TagsPresenter = MainActivityTagsPresenter(this)
 
     companion object {
         private val ALL_PERMISSION = listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -57,6 +61,8 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         btn_close.setOnClickListener(onBtnCloseClicked)
         btn_play_pause.setOnClickListener(onBtnPlayPauseClicked)
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
+
+        btn_save.setOnClickListener(onBtnSaveClicked)
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
@@ -74,36 +80,57 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    private val onBtnCloseClicked: (View) -> Unit = {
+        mediaPresenter.release()
+        initView(false)
+    }
+
+    private val onBtnPlayPauseClicked: (View) -> Unit = {
+        mediaPresenter.switch()
+    }
+
     private fun loadMusic(uri: Uri) {
-        uri.path?.let {
-            val filename = it.split(File.separator).last()
-            val mb = File(it).length() / 1024 / 1024.0
-            txt_file.text = String.format("Opening: %s (%.2fMB)", filename, mb)
+        val filepath = PathUtil.getFilePathByUri(this, uri)
+        if (filepath.isBlank()) {
+            showAlert("Failed", "File not found")
+            initView(false)
+            return
         }
+
+        val filename = filepath.split(File.separator).last()
+        val mb = File(filepath).length() / 1024 / 1024.0
+        txt_file.text = String.format("Opening: %s (%.2fMB)", filename, mb)
         try {
-            presenter.setup(this, uri)
-            presenter.play()
+            tagsPresenter.load(filepath)
+            mediaPresenter.setup(this, uri)
+            mediaPresenter.play()
         } catch (ex: Exception) {
             showAlert("Failed", "Failed to prepare music file.")
         }
     }
 
-    private val onBtnPlayPauseClicked: (View) -> Unit = {
-        presenter.switch()
-    }
+    private val onSeekBarChange = object : SeekBar.OnSeekBarChangeListener {
 
-    private val onBtnCloseClicked: (View) -> Unit = {
-        presenter.release()
-        initView(false)
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            mediaPresenter.seekStart()
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            mediaPresenter.seekStop(seekbar.progress)
+        }
+
+        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+            mediaPresenter.seekChanging(progress)
+        }
     }
 
     override fun onPause() { // hide or locked
         super.onPause()
-        presenter.pause()
+        mediaPresenter.pause()
     }
 
     override fun onDestroy() {
-        presenter.release()
+        mediaPresenter.release()
         super.onDestroy()
     }
 
@@ -116,27 +143,31 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         txt_music.text = String.format("%s / %s", now, total)
     }
 
-    private val onSeekBarChange = object : SeekBar.OnSeekBarChangeListener {
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            presenter.seekStart()
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            presenter.seekStop(seekbar.progress)
-        }
-
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            presenter.seekChanging(progress)
-        }
-    }
-
     override fun switchBtnIcon(isPlaying: Boolean) {
         if (isPlaying) {
             btn_play_pause.setImageResource(R.drawable.ic_pause_accent_24dp)
         } else {
             btn_play_pause.setImageResource(R.drawable.ic_play_accent_24dp)
         }
+    }
+
+    override fun loadTags(title: String, artist: String, album: String) {
+        edt_title.setText(title)
+        edt_artist.setText(artist)
+        edt_album.setText(album)
+    }
+
+    override fun loadCover(cover: Bitmap?) {
+        if (cover != null) {
+            bm_cover.setImageBitmap(cover)
+            txt_cover_size.text = String.format("%dKB", cover.allocationByteCount)
+        } else {
+            bm_cover.setImageResource(R.drawable.ic_launcher_background)
+        }
+    }
+
+    private val onBtnSaveClicked: (View) -> Unit = {
+        tagsPresenter.save(edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(bm_cover))
     }
 
     private fun checkPermission() {
