@@ -8,8 +8,7 @@
 + [x] Load and write cover(jpg)
 + [ ] Support other tags
 + [x] Convert video to mp3
-+ [ ] Edit and save cover
-+ [ ] Cut music
++ [ ] Crop and save cover
 
 ### Environments
 
@@ -22,9 +21,11 @@
 + [mp3agic](https://github.com/mpatric/mp3agic)
 + [MobileFFmpeg](https://github.com/tanersener/mobile-ffmpeg)
 
-### Screenshot
- 
+### Screenshots
+
 ![Screenshot](./assets/Screenshot.jpg)
+
+![Screenshot2](./assets/Screenshot2.jpg)
 
 ### References
 

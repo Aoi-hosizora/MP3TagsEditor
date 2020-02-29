@@ -203,6 +203,16 @@
                 tools:ignore="HardcodedText" />
 
             <Button
+                android:id="@+id/btn_crop_cover"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Crop"
+                android:textAllCaps="false"
+                tools:ignore="HardcodedText" />
+
+            <Button
                 android:id="@+id/btn_cover"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"

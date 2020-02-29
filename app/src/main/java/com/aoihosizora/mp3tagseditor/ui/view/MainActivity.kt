@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         btn_switch.setOnClickListener(onBtnSwitchClicked)
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
 
+        btn_crop_cover.setOnClickListener(onBtnCropCoverClicked)
         btn_cover.setOnClickListener(onBtnCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
         btn_restore.setOnClickListener(onBtnRestoreClicked)
@@ -181,9 +182,11 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
+            btn_crop_cover.isEnabled = true
             txt_cover_size.text = "${cover.width}x${cover.height} ${cover.allocationByteCount / 1024}KB"
         } else {
             iv_cover.setImageResource(R.color.white)
+            btn_crop_cover.isEnabled = false
             txt_cover_size.text = "Blank"
         }
     }
@@ -195,6 +198,17 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         RxActivityResult.on(this).startIntent(intent).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 r.data().data?.let { iv_cover.setImageURI(it) }
+            }
+        }
+    }
+
+    private val onBtnCropCoverClicked: (View) -> Unit = {
+        val intent = Intent(this, CropActivity::class.java)
+        CoverUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, CoverUtil.getBitmapFromImageView(iv_cover))
+        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+            if (r.resultCode() == Activity.RESULT_OK) {
+                val bm = CoverUtil.getImageFromExtra(r.data(), CropActivity.INTENT_BITMAP)
+                loadCover(bm)
             }
         }
     }

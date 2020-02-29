@@ -65,14 +65,11 @@ object PathUtil {
         val cursor = context.contentResolver.query(uri, arrayOf(column), selection, selectionArgs, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                try {
+                return try {
                     val idx = cursor.getColumnIndexOrThrow(column)
-                    if (idx > -1) {
-                        return cursor.getString(idx)
-                    }
+                    cursor.getString(idx)
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    return ""
+                    ""
                 }
             }
             cursor.close()

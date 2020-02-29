@@ -24,6 +24,7 @@
         </activity>
 
         <activity android:name=".ui.view.VideoActivity" />
+        <activity android:name=".ui.view.CropActivity" />
 
     </application>
 

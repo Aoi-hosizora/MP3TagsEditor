@@ -51,4 +51,8 @@ dependencies {
 
     // FFmpeg
     implementation 'com.arthenica:mobile-ffmpeg-full:4.3.1'
+
+    // Crop image
+    // noinspection GradleDependency
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
 }

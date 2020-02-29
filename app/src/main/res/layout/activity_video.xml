@@ -10,7 +10,8 @@
     android:layout_marginBottom="@dimen/pageMarginVertical"
     android:divider="@drawable/spacer_medium"
     android:orientation="vertical"
-    android:showDividers="middle">
+    android:showDividers="middle"
+    tools:context=".ui.view.VideoActivity">
 
 
     <LinearLayout
