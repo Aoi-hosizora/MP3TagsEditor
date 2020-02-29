@@ -18,7 +18,7 @@ import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
-import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaMediaPresenter
+import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaPresenter
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityTagsPresenter
 import com.aoihosizora.mp3tagseditor.util.CoverUtil
 import com.aoihosizora.mp3tagseditor.util.PathUtil
@@ -29,7 +29,7 @@ import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.View {
 
-    override val mediaPresenter = MainActivityMediaMediaPresenter(this)
+    override val mediaPresenter = MainActivityMediaPresenter(this)
     override val tagsPresenter = MainActivityTagsPresenter(this)
 
     companion object {
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
         txt_open.visibility = vis
         btn_open.visibility = vis
-        txt_file.visibility = def
+        txt_filename.visibility = def
         btn_close.visibility = def
         ll_music.visibility = def
         view_divide_head.visibility = def
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
         val filename = filepath.split(File.separator).last()
         val mb = File(filepath).length() / 1024 / 1024.0
-        txt_file.text = String.format("Opening: %s (%.2fMB)", filename, mb)
+        txt_filename.text = String.format("Opening: %s (%.2fMB)", filename, mb)
         try {
             tagsPresenter.load(filepath)
             mediaPresenter.setup(this, uri)
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             bm_cover.setImageBitmap(cover)
             txt_cover_size.text = String.format("%dx%d %dKB", cover.width, cover.height, cover.allocationByteCount / 1024)
         } else {
-            bm_cover.setImageResource(R.drawable.ic_launcher_background)
+            bm_cover.setImageResource(R.color.white)
         }
     }
 

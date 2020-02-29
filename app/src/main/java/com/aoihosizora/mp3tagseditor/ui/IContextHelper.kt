@@ -102,7 +102,7 @@ interface IContextHelper {
 
     fun Context.showProgress(
         context: Context, message: CharSequence,
-        cancelable: Boolean = true, onCancelListener: ((DialogInterface) -> Unit)? = null
+        cancelable: Boolean, onCancelListener: ((DialogInterface) -> Unit)? = null
     ): ProgressDialog {
         val progressDlg = ProgressDialog(context)
         progressDlg.setMessage(message)

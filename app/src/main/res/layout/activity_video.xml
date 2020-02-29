@@ -1,8 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_marginLeft="@dimen/pageMarginHorizontal"
+    android:layout_marginTop="@dimen/pageMarginVertical"
+    android:layout_marginRight="@dimen/pageMarginHorizontal"
+    android:layout_marginBottom="@dimen/pageMarginVertical"
+    android:divider="@drawable/spacer_medium"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <TextView
+        android:id="@+id/txt_filename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Opening: xxx.flv"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/edt_script"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="Enter command here, such as -version"
+        android:textIsSelectable="true"
+        android:textSize="20sp"
+        tools:ignore="Autofill,HardcodedText,TextFields" />
+
+    <TextView
+        android:id="@+id/txt_output"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:text="Output: please run command."
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:id="@+id/ll_commands"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/spacer_medium"
+        android:gravity="center_horizontal"
+        android:showDividers="middle">
+
+        <Button
+            android:id="@+id/btn_mp4_to_mp3"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mp4 to mp3"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btn_flv_to_mp3"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="flv to mp3"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <include
+        layout="@layout/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_run"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Run"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>

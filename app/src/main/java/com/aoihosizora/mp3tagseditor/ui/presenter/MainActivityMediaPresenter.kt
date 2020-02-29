@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
 
-class MainActivityMediaMediaPresenter(
+class MainActivityMediaPresenter(
     override val view: MainActivityContract.View
 ) : MainActivityContract.MediaPresenter {
 

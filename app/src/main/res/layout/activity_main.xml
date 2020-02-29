@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@drawable/spacer_medium"
+        android:gravity="center_vertical"
         android:showDividers="middle">
 
         <TextView
@@ -25,11 +26,11 @@
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="No music..."
+            android:text="Please open music first"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/txt_file"
+            android:id="@+id/txt_filename"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -217,7 +218,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="cover"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@color/white"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
