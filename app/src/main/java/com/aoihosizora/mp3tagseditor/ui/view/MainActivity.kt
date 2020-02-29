@@ -1,3 +1,5 @@
+@file:Suppress("SetTextI18n")
+
 package com.aoihosizora.mp3tagseditor.ui.view
 
 import android.Manifest
@@ -122,7 +124,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
         val filename = filepath.split(File.separator).last()
         val mb = File(filepath).length() / 1024 / 1024.0
-        txt_filename.text = String.format("Opening: %s (%.2fMB)", filename, mb)
+        txt_filename.text = "Opening: $filename (${mb}MB)"
         try {
             tagsPresenter.load(filepath)
             mediaPresenter.setup(this, uri)
@@ -159,7 +161,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     override fun updateSeekbar(now: String, total: String) {
-        txt_music.text = String.format("%s / %s", now, total)
+        txt_music.text = "$now / $total"
     }
 
     override fun switchBtnIcon(isPlaying: Boolean) {
@@ -179,7 +181,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
             bm_cover.setImageBitmap(cover)
-            txt_cover_size.text = String.format("%dx%d %dKB", cover.width, cover.height, cover.allocationByteCount / 1024)
+            txt_cover_size.text = "${cover.width}x${cover.height} ${cover.allocationByteCount / 1024}KB"
         } else {
             bm_cover.setImageResource(R.color.white)
         }
@@ -210,10 +212,10 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             } else {
                 try {
                     tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(bm_cover))
-                    showAlert("Success", String.format("Success to save %s.", text))
+                    showAlert("Success", "Success to save $text.")
                 } catch (ex: Exception) {
                     ex.printStackTrace()
-                    String.format("Failed", String.format("Failed to save %s.", text))
+                    showAlert("Failed", "Failed to save $text.")
                 }
             }
         }, negText = "Cancel")

@@ -70,11 +70,8 @@ class MainActivityMediaPresenter(
         val hour = allSeconds / 3600
         val minute = allSeconds % 3600 / 60
         val second = allSeconds % 60
-        return if (hour == 0) {
-            String.format("%02d:%02d", minute, second)
-        } else {
-            String.format("%02d:%02d:%02d", hour, minute, second)
-        }
+        return if (hour == 0) "$minute:$second" else "$hour:$minute:$second"
+
     }
 
     private val looperThread = Runnable {

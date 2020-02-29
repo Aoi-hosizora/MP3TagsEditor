@@ -1,11 +1,9 @@
 package com.aoihosizora.mp3tagseditor.ui.presenter
 
-import android.content.Context
 import android.content.Intent
 import com.aoihosizora.mp3tagseditor.ui.contract.VideoActivityContract
-import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
+import com.arthenica.mobileffmpeg.Config
+import com.arthenica.mobileffmpeg.FFmpeg
 
 class VideoActivityPresenter(
     override val view: VideoActivityContract.View
@@ -25,30 +23,27 @@ class VideoActivityPresenter(
         return videoPath
     }
 
-    override fun run(context: Context, command: String) {
-        val ffmpeg = FFmpeg.getInstance(context)
-        try {
-
-            ffmpeg.execute(command, object : ExecuteBinaryResponseHandler() {
-
-                override fun onStart() {
-                    view.startRun(command)
-                }
-
-                override fun onProgress(message: String?) {
-                    message?.let { view.updateOutput(message) }
-                }
-
-                override fun onSuccess(message: String?) {
-                    message?.let { view.finishRun(true, message) }
-                }
-
-                override fun onFailure(message: String?) {
-                    message?.let { view.finishRun(false, message) }
-                }
-            })
-        } catch (ex: FFmpegCommandAlreadyRunningException) {
-            view.finishRun(false, "command is already running")
+    override fun run(command: String) {
+        Config.enableLogCallback {
+            view.updateOutput(it.text)
         }
+        view.startRun(command)
+        when (FFmpeg.execute(command)) {
+            Config.RETURN_CODE_SUCCESS -> {
+                view.finishRun(true, Config.getLastCommandOutput())
+            }
+            Config.RETURN_CODE_CANCEL -> {
+                view.finishRun(true, "Execute canceled.")
+            }
+            else -> {
+                view.finishRun(false, Config.getLastCommandOutput())
+            }
+        }
+    }
+
+    override fun toMp3() {
+        val idx = getPath().lastIndexOf(".")
+        val filename = if (idx == -1) getPath() else getPath().substring(0, idx)
+        view.setScript("-i \"${getPath()}\" \"$filename.mp3\"")
     }
 }

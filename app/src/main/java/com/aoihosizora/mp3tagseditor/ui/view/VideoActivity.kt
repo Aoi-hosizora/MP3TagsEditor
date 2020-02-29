@@ -1,8 +1,14 @@
+@file:Suppress("SetTextI18n")
+
 package com.aoihosizora.mp3tagseditor.ui.view
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.method.ScrollingMovementMethod
 import android.view.MenuItem
 import android.view.View
 import com.aoihosizora.mp3tagseditor.R
@@ -35,35 +41,49 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
     }
 
     private fun initView() {
-        txt_filename.text = String.format("Opening: %s", presenter.getPath())
+        txt_filename.text = "Opening: ${presenter.getPath()}"
+        txt_output.movementMethod = ScrollingMovementMethod()
         btn_run.setOnClickListener(onBtnRunClicked)
+        btn_copy.setOnClickListener(onBtnCopyClicked)
+        btn_to_mp3.setOnClickListener { presenter.toMp3() }
     }
 
     private val onBtnRunClicked: (View) -> Unit = {
         val command = edt_script.text.toString()
         if (command.isBlank()) {
-            showAlert("Failed", "Couldn't run empty script")
+            showAlert("Failed", "Empty script!")
         } else {
-            presenter.run(this, command)
+            presenter.run(command)
 
         }
+    }
+
+    private val onBtnCopyClicked: (View) -> Unit = {
+        val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Label", presenter.getPath())
+        cm.primaryClip = clipData
+        showToast("Success to copy")
+    }
+
+    override fun setScript(command: String) {
+        edt_script.setText(command)
     }
 
     private var progress: Dialog? = null
 
     override fun startRun(command: String) {
         edt_script.isEnabled = false
-        txt_output.text = ""
+        txt_output.text = "-i ${presenter.getPath()}"
         progress = showProgress(this, command, false)
     }
 
     override fun finishRun(isSuccess: Boolean, message: String) {
         edt_script.isEnabled = true
         progress?.dismiss()
-        showAlert(if (isSuccess) "Success" else "Failed", message)
+        txt_output.text = message
     }
 
     override fun updateOutput(content: String) {
-        txt_output.text = String.format("%s\n%s", txt_output.text, content)
+        // txt_output.text = "${txt_output.text}\n$content"
     }
 }

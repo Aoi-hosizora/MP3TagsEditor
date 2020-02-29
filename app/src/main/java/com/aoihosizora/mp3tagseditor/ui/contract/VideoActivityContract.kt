@@ -1,6 +1,5 @@
 package com.aoihosizora.mp3tagseditor.ui.contract
 
-import android.content.Context
 import android.content.Intent
 
 interface VideoActivityContract {
@@ -8,6 +7,7 @@ interface VideoActivityContract {
     interface View {
         val presenter: Presenter
 
+        fun setScript(command: String)
         fun startRun(command: String)
         fun finishRun(isSuccess: Boolean, message: String)
         fun updateOutput(content: String)
@@ -18,6 +18,7 @@ interface VideoActivityContract {
 
         fun initData(intent: Intent)
         fun getPath(): String
-        fun run(context: Context, command: String)
+        fun run(command: String)
+        fun toMp3()
     }
 }

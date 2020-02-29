@@ -20,7 +20,7 @@
 ### Dependencies
 
 + [mp3agic](https://github.com/mpatric/mp3agic)
-+ [FFmpegAndroid](https://github.com/WritingMinds/ffmpeg-android-java)
++ [MobileFFmpeg](https://github.com/tanersener/mobile-ffmpeg)
 
 ### Screenshot
  
