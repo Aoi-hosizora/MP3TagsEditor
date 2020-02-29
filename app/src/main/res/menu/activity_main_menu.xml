@@ -7,7 +7,7 @@
     <item
         android:id="@+id/menu_video"
         android:icon="@drawable/ic_music_video_white_24dp"
-        android:title="视频转换"
+        android:title="Video convert"
         app:showAsAction="always"
         tools:ignore="HardcodedText" />
 </menu>

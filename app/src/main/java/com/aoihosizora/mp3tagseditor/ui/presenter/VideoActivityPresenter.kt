@@ -25,20 +25,19 @@ class VideoActivityPresenter(
 
     override fun run(command: String) {
         Config.enableLogCallback {
-            view.updateOutput(it.text)
+            view.runOnUiThread(Runnable { view.updateOutput(it.text) })
         }
         view.startRun(command)
-        when (FFmpeg.execute(command)) {
-            Config.RETURN_CODE_SUCCESS -> {
-                view.finishRun(true, Config.getLastCommandOutput())
-            }
-            Config.RETURN_CODE_CANCEL -> {
-                view.finishRun(true, "Execute canceled.")
-            }
-            else -> {
-                view.finishRun(false, Config.getLastCommandOutput())
-            }
-        }
+        Thread(Runnable {
+            val code = FFmpeg.execute(command)
+            view.runOnUiThread(Runnable {
+                when (code) {
+                    Config.RETURN_CODE_SUCCESS -> view.finishRun(true, Config.getLastCommandOutput())
+                    Config.RETURN_CODE_CANCEL -> view.finishRun(true, "Execute canceled.")
+                    else -> view.finishRun(false, Config.getLastCommandOutput())
+                }
+            })
+        }).start()
     }
 
     override fun toMp3() {

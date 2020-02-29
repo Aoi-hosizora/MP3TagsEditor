@@ -42,7 +42,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/edt_script"
+        android:id="@+id/edt_command"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -52,16 +52,54 @@
         android:textSize="20sp"
         tools:ignore="Autofill,HardcodedText,TextFields" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:divider="@drawable/spacer_medium"
+        android:gravity="center_vertical"
+        android:showDividers="middle">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp" />
+
+        <ImageView
+            android:id="@+id/iv_success"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_ok_theme_48dp"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/iv_failed"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_failed_theme_48dp"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/txt_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Please run command first..."
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/txt_output"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:scrollbars="vertical"
-        android:text="Output: please run command."
         android:textIsSelectable="true"
         tools:ignore="HardcodedText" />
-
 
     <include
         layout="@layout/divider"

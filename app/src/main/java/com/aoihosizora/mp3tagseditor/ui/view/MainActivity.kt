@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
         val filename = filepath.split(File.separator).last()
         val mb = File(filepath).length() / 1024 / 1024.0
-        txt_filename.text = "Opening: $filename (${mb}MB)"
+        txt_filename.text = String.format("Opening: %s (%.2fMB)", filename, mb)
         try {
             tagsPresenter.load(filepath)
             mediaPresenter.setup(this, uri)
@@ -180,10 +180,11 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
-            bm_cover.setImageBitmap(cover)
+            iv_cover.setImageBitmap(cover)
             txt_cover_size.text = "${cover.width}x${cover.height} ${cover.allocationByteCount / 1024}KB"
         } else {
-            bm_cover.setImageResource(R.color.white)
+            iv_cover.setImageResource(R.color.white)
+            txt_cover_size.text = "Blank"
         }
     }
 
@@ -193,9 +194,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         RxActivityResult.on(this).startIntent(intent).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
-                r.data().data?.let {
-                    bm_cover.setImageURI(it)
-                }
+                r.data().data?.let { iv_cover.setImageURI(it) }
             }
         }
     }
@@ -211,7 +210,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 showAlert("Failed", "New filename couldn't be the same")
             } else {
                 try {
-                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(bm_cover))
+                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(iv_cover))
                     showAlert("Success", "Success to save $text.")
                 } catch (ex: Exception) {
                     ex.printStackTrace()

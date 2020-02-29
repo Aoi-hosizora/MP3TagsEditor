@@ -2,7 +2,6 @@
 
 package com.aoihosizora.mp3tagseditor.ui.view
 
-import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -43,18 +42,21 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
     private fun initView() {
         txt_filename.text = "Opening: ${presenter.getPath()}"
         txt_output.movementMethod = ScrollingMovementMethod()
+        progress.visibility = View.GONE
+        iv_success.visibility = View.GONE
+        iv_failed.visibility = View.GONE
+
         btn_run.setOnClickListener(onBtnRunClicked)
         btn_copy.setOnClickListener(onBtnCopyClicked)
         btn_to_mp3.setOnClickListener { presenter.toMp3() }
     }
 
     private val onBtnRunClicked: (View) -> Unit = {
-        val command = edt_script.text.toString()
+        val command = edt_command.text.toString()
         if (command.isBlank()) {
             showAlert("Failed", "Empty script!")
         } else {
             presenter.run(command)
-
         }
     }
 
@@ -66,24 +68,37 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
     }
 
     override fun setScript(command: String) {
-        edt_script.setText(command)
+        edt_command.setText(command)
     }
 
-    private var progress: Dialog? = null
-
     override fun startRun(command: String) {
-        edt_script.isEnabled = false
-        txt_output.text = "-i ${presenter.getPath()}"
-        progress = showProgress(this, command, false)
+        progress.visibility = View.VISIBLE
+        iv_success.visibility = View.GONE
+        iv_failed.visibility = View.GONE
+
+        edt_command.isEnabled = false
+        btn_run.isEnabled = false
+        txt_output.text = ""
+        txt_message.text = "Running..."
     }
 
     override fun finishRun(isSuccess: Boolean, message: String) {
-        edt_script.isEnabled = true
-        progress?.dismiss()
-        txt_output.text = message
+        progress.visibility = View.GONE
+        iv_success.visibility = if (isSuccess) View.VISIBLE else View.GONE
+        iv_failed.visibility = if (!isSuccess) View.VISIBLE else View.GONE
+
+        edt_command.isEnabled = true
+        btn_run.isEnabled = true
+        txt_message.text = if (isSuccess) "Success" else "Failed"
     }
 
     override fun updateOutput(content: String) {
-        // txt_output.text = "${txt_output.text}\n$content"
+        txt_output.append(content)
+        val scrollAmount = txt_output.layout.getLineTop(txt_output.lineCount) - txt_output.height
+        if (scrollAmount > 0) {
+            txt_output.scrollTo(0, scrollAmount)
+        } else {
+            txt_output.scrollTo(0, 0)
+        }
     }
 }

@@ -7,7 +7,7 @@
 + [x] Read and write title, artist, album
 + [x] Load and write cover(jpg)
 + [ ] Support other tags
-+ [ ] Convert video to mp3
++ [x] Convert video to mp3
 + [ ] Edit and save cover
 + [ ] Cut music
 

@@ -214,7 +214,7 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/bm_cover"
+            android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="cover"

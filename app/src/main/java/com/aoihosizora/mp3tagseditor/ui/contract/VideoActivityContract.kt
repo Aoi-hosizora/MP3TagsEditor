@@ -7,6 +7,7 @@ interface VideoActivityContract {
     interface View {
         val presenter: Presenter
 
+        fun runOnUiThread(action: Runnable)
         fun setScript(command: String)
         fun startRun(command: String)
         fun finishRun(isSuccess: Boolean, message: String)
