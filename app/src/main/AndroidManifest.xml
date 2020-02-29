@@ -24,7 +24,9 @@
         </activity>
 
         <activity android:name=".ui.view.VideoActivity" />
-        <activity android:name=".ui.view.CropActivity" />
+        <activity
+            android:name=".ui.view.CropActivity"
+            android:theme="@style/Theme.Design.NoActionBar" />
 
     </application>
 
