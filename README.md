@@ -6,10 +6,10 @@
 
 + [x] Read and write title, artist, album
 + [x] Load and write cover(jpg)
-+ [ ] Support other tag
++ [ ] Support other tags
++ [ ] Convert video to mp3
 + [ ] Edit and save cover
 + [ ] Cut music
-+ [ ] Convert video to mp3
 
 ### Environments
 
@@ -20,6 +20,7 @@
 ### Dependencies
 
 + [mp3agic](https://github.com/mpatric/mp3agic)
++ [FFmpegAndroid](https://github.com/WritingMinds/ffmpeg-android-java)
 
 ### Screenshot
  
@@ -28,3 +29,4 @@
 ### References
 
 + [cannot access Path class file for java.nio.file.Path not found](https://github.com/mpatric/mp3agic/issues/141)
++ [FFmpeg Android Java](http://writingminds.github.io/ffmpeg-android-java/)

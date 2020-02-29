@@ -48,4 +48,7 @@ dependencies {
     // Mp3
     // noinspection GradleDependency
     implementation 'com.mpatric:mp3agic:0.9.0'
+
+    // FFmpeg
+    implementation 'com.writingminds:FFmpegAndroid:0.3.2'
 }

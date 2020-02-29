@@ -1,7 +1,6 @@
 package com.aoihosizora.mp3tagseditor.ui.view
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +11,8 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.R
@@ -36,13 +37,18 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         private const val REQUEST_PERMISSION_CODE = 1
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         checkPermission()
         initView()
+        initListener()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_main_menu, menu)
+        return true
     }
 
     private fun initView(hasFile: Boolean = false) {
@@ -58,7 +64,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         ll_main.visibility = def
         view_divide_bottom.visibility = def
         ll_bottom.visibility = def
+    }
 
+    private fun initListener() {
         btn_open.setOnClickListener(onBtnOpenClicked)
         btn_close.setOnClickListener(onBtnCloseClicked)
         btn_switch.setOnClickListener(onBtnSwitchClicked)
@@ -67,6 +75,16 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         btn_cover.setOnClickListener(onBtnCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
         btn_restore.setOnClickListener(onBtnRestoreClicked)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item == null) {
+            return false
+        }
+        when (item.itemId) {
+            R.id.menu_video -> onMenuVideoClicked()
+        }
+        return true
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
@@ -96,7 +114,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     private fun loadMusic(uri: Uri) {
         val filepath = PathUtil.getFilePathByUri(this, uri)
         if (filepath.isBlank()) {
-            showAlert("Failed", "File not found")
+            showAlert("Failed", "File not found.")
             initView(false)
             return
         }
@@ -198,6 +216,10 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 }
             }
         }, negText = "Cancel")
+    }
+
+    private val onMenuVideoClicked: () -> Unit = {
+        startActivity(Intent(this, VideoActivity::class.java))
     }
 
     private fun checkPermission() {
