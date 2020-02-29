@@ -1,8 +1,7 @@
 package com.aoihosizora.mp3tagseditor.ui.view
 
-import android.app.ProgressDialog
+import android.app.Dialog
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
@@ -16,8 +15,8 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
 
     override val presenter = VideoActivityPresenter(this)
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -50,7 +49,7 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         }
     }
 
-    private var progress: ProgressDialog? = null
+    private var progress: Dialog? = null
 
     override fun startRun(command: String) {
         edt_script.isEnabled = false

@@ -20,6 +20,7 @@ import com.aoihosizora.mp3tagseditor.ui.IContextHelper
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaPresenter
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityTagsPresenter
+import com.aoihosizora.mp3tagseditor.ui.presenter.VideoActivityPresenter
 import com.aoihosizora.mp3tagseditor.util.CoverUtil
 import com.aoihosizora.mp3tagseditor.util.PathUtil
 import kotlinx.android.synthetic.main.activity_main.*
@@ -219,7 +220,24 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     private val onMenuVideoClicked: () -> Unit = {
-        startActivity(Intent(this, VideoActivity::class.java))
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.type = "video/*"
+        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+            if (r.resultCode() == Activity.RESULT_OK) {
+                r.data().data?.let {
+                    val path = PathUtil.getFilePathByUri(this, it)
+                    if (path.isBlank()) {
+                        showAlert("Failed", "File not found")
+                        return@let
+                    }
+                    val videoIntent = Intent(this, VideoActivity::class.java)
+                    videoIntent.putExtra(VideoActivityPresenter.INTENT_PATH, path)
+                    startActivity(videoIntent)
+                }
+            }
+        }
     }
 
     private fun checkPermission() {

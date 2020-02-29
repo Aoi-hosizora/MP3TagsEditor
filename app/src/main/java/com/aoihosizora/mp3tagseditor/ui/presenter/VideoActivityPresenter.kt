@@ -28,7 +28,8 @@ class VideoActivityPresenter(
     override fun run(context: Context, command: String) {
         val ffmpeg = FFmpeg.getInstance(context)
         try {
-            ffmpeg.execute(arrayOf(command), object : ExecuteBinaryResponseHandler() {
+
+            ffmpeg.execute(command, object : ExecuteBinaryResponseHandler() {
 
                 override fun onStart() {
                     view.startRun(command)

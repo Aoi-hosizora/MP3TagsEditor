@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Opening: xxx.flv"
+        android:textIsSelectable="true"
         tools:ignore="HardcodedText" />
 
     <EditText
@@ -26,9 +27,9 @@
         android:layout_weight="1"
         android:gravity="top"
         android:hint="Enter command here, such as -version"
-        android:textIsSelectable="true"
+        android:inputType="text"
         android:textSize="20sp"
-        tools:ignore="Autofill,HardcodedText,TextFields" />
+        tools:ignore="Autofill,HardcodedText" />
 
     <TextView
         android:id="@+id/txt_output"
@@ -44,7 +45,8 @@
         android:layout_height="wrap_content"
         android:divider="@drawable/spacer_medium"
         android:gravity="center_horizontal"
-        android:showDividers="middle">
+        android:showDividers="middle"
+        android:textIsSelectable="true">
 
         <Button
             android:id="@+id/btn_mp4_to_mp3"
