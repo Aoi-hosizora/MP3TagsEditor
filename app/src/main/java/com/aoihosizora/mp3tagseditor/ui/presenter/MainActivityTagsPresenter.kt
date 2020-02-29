@@ -2,7 +2,8 @@ package com.aoihosizora.mp3tagseditor.ui.presenter
 
 import android.graphics.Bitmap
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
-import com.aoihosizora.mp3tagseditor.util.CoverUtil
+import com.aoihosizora.mp3tagseditor.util.ImageUtil
+import com.aoihosizora.mp3tagseditor.util.PathUtil
 import com.mpatric.mp3agic.ID3v2
 import com.mpatric.mp3agic.ID3v23Tag
 import com.mpatric.mp3agic.Mp3File
@@ -34,7 +35,7 @@ class MainActivityTagsPresenter(
         tags?.let {
             view.loadTags(it.title ?: "", it.artist ?: "", it.album ?: "")
             if (it.albumImage != null && it.albumImage.isNotEmpty()) {
-                view.loadCover(CoverUtil.getBitmapFromByteArray(it.albumImage))
+                view.loadCover(ImageUtil.getBitmapFromByteArray(it.albumImage))
             } else {
                 view.loadCover(null)
             }
@@ -47,7 +48,7 @@ class MainActivityTagsPresenter(
             it.id3v2Tag.artist = artist
             it.id3v2Tag.album = album
             cover?.let { bm ->
-                it.id3v2Tag.setAlbumImage(CoverUtil.getJpegByteArrayFromBitmap(bm), "image/jpg")
+                it.id3v2Tag.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(bm), "image/jpg")
             }
             it.save(filename)
         }
@@ -55,5 +56,9 @@ class MainActivityTagsPresenter(
 
     override fun getFilename(): String {
         return mp3File?.filename ?: ""
+    }
+
+    override fun getFilenameWithoutExt(): String {
+        return PathUtil.getFilenameWithoutExt(getFilename())
     }
 }

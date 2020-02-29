@@ -2,6 +2,7 @@ package com.aoihosizora.mp3tagseditor.ui.presenter
 
 import android.content.Intent
 import com.aoihosizora.mp3tagseditor.ui.contract.VideoActivityContract
+import com.aoihosizora.mp3tagseditor.util.PathUtil
 import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 
@@ -41,8 +42,7 @@ class VideoActivityPresenter(
     }
 
     override fun toMp3() {
-        val idx = getPath().lastIndexOf(".")
-        val filename = if (idx == -1) getPath() else getPath().substring(0, idx)
-        view.setScript("-i \"${getPath()}\" \"$filename.mp3\"")
+        val filenameWithoutExt = PathUtil.getFilenameWithoutExt(PathUtil.getFilenameFromPath(getPath()))
+        view.setScript("-i \"${getPath()}\" \"$filenameWithoutExt.mp3\"")
     }
 }

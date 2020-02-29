@@ -23,12 +23,13 @@ import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaPresenter
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityTagsPresenter
 import com.aoihosizora.mp3tagseditor.ui.presenter.VideoActivityPresenter
-import com.aoihosizora.mp3tagseditor.util.CoverUtil
+import com.aoihosizora.mp3tagseditor.util.ImageUtil
 import com.aoihosizora.mp3tagseditor.util.PathUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import rx_activity_result2.RxActivityResult
 import java.io.File
 import kotlin.system.exitProcess
+
 
 class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.View {
 
@@ -76,9 +77,10 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
 
         btn_crop_cover.setOnClickListener(onBtnCropCoverClicked)
-        btn_cover.setOnClickListener(onBtnCoverClicked)
+        btn_choose_cover.setOnClickListener(onBtnChooseCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
         btn_restore.setOnClickListener(onBtnRestoreClicked)
+        iv_cover.setOnLongClickListener(onImageViewCoverLongClicked)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -179,6 +181,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         edt_album.setText(album)
     }
 
+    /**
+     * !!!
+     */
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
@@ -191,26 +196,43 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
-    private val onBtnCoverClicked: (View) -> Unit = {
+    private val onBtnChooseCoverClicked: (View) -> Unit = {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         RxActivityResult.on(this).startIntent(intent).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
-                r.data().data?.let { iv_cover.setImageURI(it) }
+                r.data().data?.let {
+                    val bm = ImageUtil.getBitmapFromUri(contentResolver, it)
+                    loadCover(bm)
+                }
             }
         }
     }
 
     private val onBtnCropCoverClicked: (View) -> Unit = {
         val intent = Intent(this, CropActivity::class.java)
-        CoverUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, CoverUtil.getBitmapFromImageView(iv_cover))
+        ImageUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, ImageUtil.getBitmapFromImageView(iv_cover))
         RxActivityResult.on(this).startIntent(intent).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
-                val bm = CoverUtil.getImageFromExtra(r.data(), CropActivity.INTENT_BITMAP)
+                val bm = ImageUtil.getImageFromExtra(r.data(), CropActivity.INTENT_BITMAP)
                 loadCover(bm)
             }
         }
+    }
+
+    private val onImageViewCoverLongClicked: (View) -> Boolean = {
+        showAlert("Save", "Save cover?", posText = "Save", posListener = { _, _ ->
+            try {
+                val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
+                ImageUtil.saveImage(this, contentResolver, ImageUtil.getBitmapFromImageView(iv_cover), desc, desc)
+                showToast("Save cover success")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showAlert("Failed", "Failed to save the cover.")
+            }
+        }, negText = "Cancel")
+        true
     }
 
     private val onBtnRestoreClicked: (View) -> Unit = {
@@ -224,7 +246,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 showAlert("Failed", "New filename couldn't be the same")
             } else {
                 try {
-                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), CoverUtil.getBitmapFromImageView(iv_cover))
+                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), ImageUtil.getBitmapFromImageView(iv_cover))
                     showAlert("Success", "Success to save $text.")
                 } catch (ex: Exception) {
                     ex.printStackTrace()

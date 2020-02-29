@@ -42,5 +42,6 @@ interface MainActivityContract {
         fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?)
         fun getFilename(): String
         fun restore()
+        fun getFilenameWithoutExt(): String
     }
 }

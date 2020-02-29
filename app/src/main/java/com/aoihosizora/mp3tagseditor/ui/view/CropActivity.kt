@@ -9,7 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
-import com.aoihosizora.mp3tagseditor.util.CoverUtil
+import com.aoihosizora.mp3tagseditor.util.ImageUtil
 import kotlinx.android.synthetic.main.activity_crop.*
 
 
@@ -31,7 +31,7 @@ class CropActivity : AppCompatActivity(), IContextHelper {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
-        val bm = CoverUtil.getImageFromExtra(intent, INTENT_BITMAP)
+        val bm = ImageUtil.getImageFromExtra(intent, INTENT_BITMAP)
         if (bm == null) {
             finish()
         }
@@ -44,7 +44,7 @@ class CropActivity : AppCompatActivity(), IContextHelper {
         when (item.itemId) {
             R.id.menu_crop -> {
                 val intent = Intent()
-                CoverUtil.putImageToExtra(intent, INTENT_BITMAP, iv_crop.croppedImage)
+                ImageUtil.putImageToExtra(intent, INTENT_BITMAP, iv_crop.croppedImage)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }

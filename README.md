@@ -8,7 +8,7 @@
 + [x] Load and write cover(jpg)
 + [ ] Support other tags
 + [x] Convert video to mp3
-+ [ ] Crop and save cover
++ [x] Crop and save cover
 
 ### Environments
 
@@ -19,7 +19,8 @@
 ### Dependencies
 
 + [mp3agic](https://github.com/mpatric/mp3agic)
-+ [MobileFFmpeg](https://github.com/tanersener/mobile-ffmpeg)
++ [mobile-ffmpeg](https://github.com/tanersener/mobile-ffmpeg)
++ [android-image-cropper]()
 
 ### Screenshots
 
@@ -30,4 +31,3 @@
 ### References
 
 + [cannot access Path class file for java.nio.file.Path not found](https://github.com/mpatric/mp3agic/issues/141)
-+ [FFmpeg Android Java](http://writingminds.github.io/ffmpeg-android-java/)

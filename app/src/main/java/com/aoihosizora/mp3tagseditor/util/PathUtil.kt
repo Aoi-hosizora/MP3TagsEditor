@@ -7,9 +7,20 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import java.io.File
 import java.lang.Exception
 
 object PathUtil {
+
+    fun getFilenameFromPath(path: String): String {
+        val sp = path.split(File.separator)
+        return if (sp.isEmpty()) path else sp.last()
+    }
+
+    fun getFilenameWithoutExt(filename: String): String {
+        val idx = filename.indexOf(".")
+        return if (idx == -1) filename else filename.substring(0, idx)
+    }
 
     fun getFilePathByUri(context: Context, uri: Uri): String {
         if (uri.path == null) {
