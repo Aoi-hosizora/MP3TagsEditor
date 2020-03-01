@@ -15,12 +15,6 @@ import java.io.File
 
 object ImageUtil {
 
-    fun getBitmapByte(bm: Bitmap): Int {
-        val stream = ByteArrayOutputStream()
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        return bm.byteCount
-    }
-
     fun getBitmapFromUri(resolver: ContentResolver, uri: Uri): Bitmap? {
         return Images.Media.getBitmap(resolver, uri)
     }

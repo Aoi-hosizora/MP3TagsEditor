@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
             btn_crop_cover.isEnabled = true
-            txt_cover_size.text = "${cover.width}x${cover.height} ${ImageUtil.getBitmapByte(cover) / 1024}KB"
+            txt_cover_size.text = "${cover.width} x ${cover.height}"
         } else {
             iv_cover.setImageResource(R.color.white)
             btn_crop_cover.isEnabled = false

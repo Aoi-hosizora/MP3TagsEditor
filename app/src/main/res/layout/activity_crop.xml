@@ -22,13 +22,28 @@
             android:fitsSystemWindows="true"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:navigationIcon="@drawable/ic_back_white_24dp" />
+            app:navigationIcon="@drawable/ic_back_white_24dp"
+            app:title="Crop cover" />
 
     </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:id="@+id/txt_scale_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/pageMarginHorizontal"
+        android:layout_marginTop="@dimen/pageMarginVertical"
+        android:layout_marginRight="@dimen/pageMarginHorizontal"
+        android:layout_marginBottom="@dimen/pageMarginVertical"
+        android:text="Current size: 200 x 200"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
 
     <com.theartofdev.edmodo.cropper.CropImageView
         android:id="@+id/iv_crop"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>

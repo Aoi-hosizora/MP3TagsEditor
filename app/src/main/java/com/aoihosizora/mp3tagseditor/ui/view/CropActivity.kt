@@ -1,3 +1,5 @@
+@file:Suppress("SetTextI18n")
+
 package com.aoihosizora.mp3tagseditor.ui.view
 
 import android.app.Activity
@@ -31,11 +33,19 @@ class CropActivity : AppCompatActivity(), IContextHelper {
 
         val bm = (application as MyApplication).getObject() as? Bitmap
         if (bm == null) {
+            showAlert("Failed", "Couldn't load cover.")
             finish()
         }
         iv_crop.setImageBitmap(bm!!)
+        updateScaleSize()
+        iv_crop.setOnCropWindowChangedListener { updateScaleSize() }
+
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.setOnMenuItemClickListener { onMenuItemClickListener(it) }
+    }
+
+    private fun updateScaleSize() {
+        txt_scale_size.text = "Current size: ${iv_crop.cropWindowRect.width()} x ${iv_crop.cropWindowRect.height()}"
     }
 
     private fun onMenuItemClickListener(item: MenuItem): Boolean {
