@@ -33,7 +33,7 @@ object ImageUtil {
         return stream.toByteArray()
     }
 
-    fun saveImage(context: Context, contentResolver: ContentResolver, bm: Bitmap, title: String, description: String) {
+    fun saveImage(context: Context, contentResolver: ContentResolver, bm: Bitmap, title: String, description: String): String {
         val inserted = Images.Media.insertImage(contentResolver, bm, title, description)
         val f = File(PathUtil.getFilePathByUri(context, Uri.parse(inserted)))
 
@@ -41,5 +41,6 @@ object ImageUtil {
         intent.action = Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
         intent.data = Uri.fromFile(f)
         context.sendBroadcast(intent)
+        return inserted
     }
 }

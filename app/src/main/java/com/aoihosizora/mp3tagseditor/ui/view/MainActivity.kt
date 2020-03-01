@@ -19,6 +19,7 @@ import android.widget.PopupMenu
 import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.MyApplication
 import com.aoihosizora.mp3tagseditor.R
+import com.aoihosizora.mp3tagseditor.model.Metadata
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
 import com.aoihosizora.mp3tagseditor.ui.presenter.MainActivityMediaPresenter
@@ -187,10 +188,15 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     // endregion
 
-    override fun loadTags(title: String, artist: String, album: String) {
-        edt_title.setText(title)
-        edt_artist.setText(artist)
-        edt_album.setText(album)
+    override fun loadTags(metadata: Metadata) {
+        edt_title.setText(metadata.title)
+        edt_artist.setText(metadata.artist)
+        edt_album.setText(metadata.album)
+        edt_year.setText(metadata.year)
+        edt_track.setText(metadata.track)
+        edt_genre.setText(metadata.genre.toString())
+        edt_album_artist.setText(metadata.albumArtist)
+        edt_composer.setText(metadata.composer)
     }
 
     private val onBtnRestoreClicked: (View) -> Unit = {
@@ -249,7 +255,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 }
             }
         } catch (ex: Exception) {
-            showAlert("", ex.message!!)
+            ex.printStackTrace()
         }
     }
 
@@ -262,8 +268,8 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             }
             val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
             try {
-                ImageUtil.saveImage(this, contentResolver, cover, desc, desc)
-                showToast("Save cover success")
+                val path = ImageUtil.saveImage(this, contentResolver, cover, desc, desc)
+                showToast("Save path in $path success")
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showAlert("Failed", "Failed to save the cover.")
@@ -283,12 +289,16 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                     return@showInputDlg
                 }
 
-                tagsPresenter.setCover(ImageUtil.getBitmapFromImageView(iv_cover))
-                val ok = tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString())
+                val metadata = Metadata(
+                    edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
+                    edt_year.text.toString(), edt_track.text.toString(), edt_genre.text.toString().toInt(),
+                    edt_album_artist.text.toString(), edt_composer.text.toString()
+                )
+                val ok = tagsPresenter.save(text, metadata, ImageUtil.getBitmapFromImageView(iv_cover))
                 if (ok) {
-                    showAlert("Success", "Success to save $text.")
+                    showToast("Success to save $text")
                 } else {
-                    showAlert("Failed", "Failed to save $text.")
+                    showAlert("Failed", "Failed to save music $text.")
                     save()
                 }
             }, negText = "Cancel")

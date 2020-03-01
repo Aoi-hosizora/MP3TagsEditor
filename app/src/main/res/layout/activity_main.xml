@@ -180,6 +180,113 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_year"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Year"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Year"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText" />
+
+            <TextView
+                android:id="@+id/txt_track"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Track"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_track"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Track"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText" />
+
+            <TextView
+                android:id="@+id/txt_genre"
+                android:layout_width="@dimen/settingLabelWidth"
+                android:layout_height="wrap_content"
+                android:text="Genre"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_genre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Genre"
+                android:inputType="numberDecimal"
+                tools:ignore="Autofill,HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_album_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_album_artist"
+                android:layout_width="@dimen/settingLabelWidthLong"
+                android:layout_height="wrap_content"
+                android:text="Album artist"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_album_artist"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Song album artist"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_composer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/spacer_medium"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/txt_composer"
+                android:layout_width="@dimen/settingLabelWidthLong"
+                android:layout_height="wrap_content"
+                android:text="Composer"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/edt_composer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Song composer"
+                android:inputType="text"
+                tools:ignore="Autofill,HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -4,9 +4,8 @@
 
 ### Functions
 
-+ [x] Read and write title, artist, album
++ [x] Support some of tags
 + [x] Load and write cover(jpg)
-+ [ ] Support other tags
 + [x] Convert video to mp3
 + [x] Crop and save cover
 
@@ -27,6 +26,8 @@
 ![Screenshot](./assets/Screenshot.jpg)
 
 ![Screenshot2](./assets/Screenshot2.jpg)
+
+![Screenshot3](./assets/Screenshot3.jpg)
 
 ### References
 

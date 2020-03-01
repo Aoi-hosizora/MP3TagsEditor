@@ -12,11 +12,6 @@ import java.lang.Exception
 
 object PathUtil {
 
-    fun getFilenameFromPath(path: String): String {
-        val sp = path.split(File.separator)
-        return if (sp.isEmpty()) path else sp.last()
-    }
-
     fun getFilenameWithoutExt(filename: String): String {
         val idx = filename.indexOf(".")
         return if (idx == -1) filename else filename.substring(0, idx)
@@ -32,7 +27,7 @@ object PathUtil {
             return uri.path ?: ""
         }
 
-        // 2. content://media/external/images/media/222 < 4.4
+        // 2. content://media/external/audio/media/222
         if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
             val path = getDataColumn(context, uri)
             if (path.isNotBlank()) {
@@ -40,7 +35,8 @@ object PathUtil {
             }
         }
 
-        // 3. content://com.android.providers.media.documents/document/image%3A235700 >= 4.4
+        // 3. content://com.amaze.filemanager/storage_root/storage/emulated/0/xxx
+        // 3. content://com.android.providers.media.documents/document/image%3A235700
         if (uri.scheme == ContentResolver.SCHEME_CONTENT && DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) { // ExternalStorageProvider
                 val docId = DocumentsContract.getDocumentId(uri)
@@ -56,6 +52,9 @@ object PathUtil {
                     java.lang.Long.valueOf(id)
                 )
                 return getDataColumn(context, contentUri)
+            } else if (isAmazeFileManagerDocument(uri)) { // AmazeFileManager
+                val path = uri.path ?: return ""
+                return path.substring("/storage_root".length)
             } else if (isMediaDocument(uri)) { // MediaProvider
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
@@ -94,6 +93,10 @@ object PathUtil {
 
     private fun isDownloadsDocument(uri: Uri): Boolean {
         return uri.authority == "com.android.providers.downloads.documents"
+    }
+
+    private fun isAmazeFileManagerDocument(uri: Uri): Boolean {
+        return uri.authority == "com.amaze.filemanager"
     }
 
     private fun isMediaDocument(uri: Uri): Boolean {

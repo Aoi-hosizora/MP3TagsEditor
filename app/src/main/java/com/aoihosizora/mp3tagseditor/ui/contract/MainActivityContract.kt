@@ -3,7 +3,7 @@ package com.aoihosizora.mp3tagseditor.ui.contract
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import com.mpatric.mp3agic.ID3v2
+import com.aoihosizora.mp3tagseditor.model.Metadata
 
 interface MainActivityContract {
 
@@ -16,7 +16,7 @@ interface MainActivityContract {
         fun updateSeekbar(now: String, total: String)
         fun switchBtnIcon(isPlaying: Boolean)
 
-        fun loadTags(title: String, artist: String, album: String)
+        fun loadTags(metadata: Metadata)
         fun loadCover(cover: Bitmap?)
     }
 
@@ -42,7 +42,6 @@ interface MainActivityContract {
         fun restore()
         fun getFilename(): String
         fun getFilenameWithoutExt(): String
-        fun setCover(bitmap: Bitmap?)
-        fun save(filename: String, title: String, artist: String, album: String): Boolean
+        fun save(filename: String, metadata: Metadata, cover: Bitmap?): Boolean
     }
 }

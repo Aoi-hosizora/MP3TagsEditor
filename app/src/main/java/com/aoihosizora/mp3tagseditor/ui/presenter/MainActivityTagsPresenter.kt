@@ -1,6 +1,7 @@
 package com.aoihosizora.mp3tagseditor.ui.presenter
 
 import android.graphics.Bitmap
+import com.aoihosizora.mp3tagseditor.model.Metadata
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
 import com.aoihosizora.mp3tagseditor.util.ImageUtil
 import com.aoihosizora.mp3tagseditor.util.PathUtil
@@ -33,7 +34,13 @@ class MainActivityTagsPresenter(
 
     override fun restore() {
         tags?.let {
-            view.loadTags(it.title ?: "", it.artist ?: "", it.album ?: "")
+            view.loadTags(
+                Metadata(
+                    title = it.title ?: "", artist = it.artist ?: "", album = it.album ?: "",
+                    year = it.year ?: "", track = it.track ?: "", genre = it.genre,
+                    albumArtist = it.albumArtist ?: "", composer = it.composer ?: ""
+                )
+            )
             if (it.albumImage != null && it.albumImage.isNotEmpty()) {
                 view.loadCover(ImageUtil.getBitmapFromByteArray(it.albumImage))
             } else {
@@ -42,21 +49,23 @@ class MainActivityTagsPresenter(
         }
     }
 
-    override fun setCover(bitmap: Bitmap?) {
-        mp3File?.id3v2Tag?.let {
-            if (bitmap == null) {
-                it.clearAlbumImage()
-            } else {
-                it.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(bitmap), "image/jpg")
-            }
-        }
-    }
-
-    override fun save(filename: String, title: String, artist: String, album: String): Boolean {
+    override fun save(filename: String, metadata: Metadata, cover: Bitmap?): Boolean {
         mp3File?.let {
-            it.id3v2Tag.title = title
-            it.id3v2Tag.artist = artist
-            it.id3v2Tag.album = album
+            it.id3v2Tag.title = metadata.title
+            it.id3v2Tag.artist = metadata.artist
+            it.id3v2Tag.album = metadata.album
+            it.id3v2Tag.year = metadata.year
+            it.id3v2Tag.track = metadata.track
+            it.id3v2Tag.genre = metadata.genre
+            it.id3v2Tag.albumArtist = metadata.albumArtist
+            it.id3v2Tag.composer = metadata.composer
+
+            if (cover == null) {
+                it.id3v2Tag.clearAlbumImage()
+            } else {
+                it.id3v2Tag.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(cover), "image/jpg")
+            }
+
             return try {
                 it.save(filename)
                 true
