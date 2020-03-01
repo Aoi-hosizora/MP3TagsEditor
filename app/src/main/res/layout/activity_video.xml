@@ -13,14 +13,12 @@
     android:showDividers="middle"
     tools:context=".ui.view.VideoActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@drawable/spacer_medium"
         android:gravity="center_vertical"
         android:showDividers="middle">
-
 
         <TextView
             android:id="@+id/txt_filename"

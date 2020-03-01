@@ -17,7 +17,7 @@ class MainActivityTagsPresenter(
     private var tags: ID3v2? = null
 
     override fun load(path: String) {
-        mp3File = Mp3File(path)
+        mp3File = Mp3File(path) // No mpegs frames found...
         if (!mp3File!!.hasId3v2Tag()) {
             mp3File!!.id3v2Tag = ID3v23Tag()
         }
@@ -42,7 +42,7 @@ class MainActivityTagsPresenter(
         }
     }
 
-    override fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?) {
+    override fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?): Boolean {
         mp3File?.let {
             it.id3v2Tag.title = title
             it.id3v2Tag.artist = artist
@@ -50,8 +50,15 @@ class MainActivityTagsPresenter(
             cover?.let { bm ->
                 it.id3v2Tag.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(bm), "image/jpg")
             }
-            it.save(filename)
+            return try {
+                it.save(filename)
+                true
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                false
+            }
         }
+        return false
     }
 
     override fun getFilename(): String {

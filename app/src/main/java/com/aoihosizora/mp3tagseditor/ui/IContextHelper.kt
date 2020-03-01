@@ -6,6 +6,8 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.EditText
@@ -121,5 +123,33 @@ interface IContextHelper {
         action: CharSequence, listener: ((View) -> Unit)? = null
     ) {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAction(action, listener).show()
+    }
+
+    fun Context.openImageIntent(): Intent {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+        return intent
+    }
+
+    fun Context.openAudioIntent(): Intent {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra("oneshot", 0)
+        intent.putExtra("configchange", 0)
+        intent.type = "audio/*"
+        return intent
+    }
+
+    fun Context.openVideoIntent(): Intent {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra("oneshot", 0)
+        intent.putExtra("configchange", 0)
+        intent.type = "video/*"
+        return intent
     }
 }

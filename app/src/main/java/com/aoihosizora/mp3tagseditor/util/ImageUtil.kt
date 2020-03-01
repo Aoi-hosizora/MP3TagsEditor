@@ -23,8 +23,8 @@ object ImageUtil {
         return BitmapFactory.decodeByteArray(arr, 0, arr.size)
     }
 
-    fun getBitmapFromImageView(im: ImageView): Bitmap {
-        return (im.drawable as BitmapDrawable).bitmap
+    fun getBitmapFromImageView(im: ImageView): Bitmap? {
+        return (im.drawable as? BitmapDrawable)?.bitmap
     }
 
     fun getJpegByteArrayFromBitmap(bm: Bitmap): ByteArray {

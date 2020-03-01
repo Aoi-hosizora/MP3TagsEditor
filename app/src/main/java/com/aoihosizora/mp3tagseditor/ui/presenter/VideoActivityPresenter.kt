@@ -42,7 +42,6 @@ class VideoActivityPresenter(
     }
 
     override fun toMp3() {
-        val filenameWithoutExt = PathUtil.getFilenameWithoutExt(PathUtil.getFilenameFromPath(getPath()))
-        view.setScript("-i \"${getPath()}\" \"$filenameWithoutExt.mp3\"")
+        view.setScript("-i \"${getPath()}\" \"${PathUtil.getFilenameWithoutExt(getPath())}.mp3\"")
     }
 }

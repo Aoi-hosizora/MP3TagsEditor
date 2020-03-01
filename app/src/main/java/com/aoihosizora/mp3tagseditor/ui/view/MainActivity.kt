@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -94,11 +93,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     private val onBtnOpenClicked: (View) -> Unit = {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.type = "audio/*"
-        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+        RxActivityResult.on(this).startIntent(openAudioIntent()).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 r.data().data?.let {
                     initView(true)
@@ -188,7 +183,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
             btn_crop_cover.isEnabled = true
-            txt_cover_size.text = "${cover.width}x${cover.height} ${cover.allocationByteCount / 1024}KB"
+            txt_cover_size.text = "${cover.width}x${cover.height} ${cover.byteCount / 1024}KB"
         } else {
             iv_cover.setImageResource(R.color.white)
             btn_crop_cover.isEnabled = false
@@ -197,10 +192,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     private val onBtnChooseCoverClicked: (View) -> Unit = {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+        RxActivityResult.on(this).startIntent(openImageIntent()).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 r.data().data?.let {
                     val bm = ImageUtil.getBitmapFromUri(contentResolver, it)
@@ -210,9 +202,14 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
-    private val onBtnCropCoverClicked: (View) -> Unit = {
+    private val onBtnCropCoverClicked: (View) -> Unit = a@{
         val intent = Intent(this, CropActivity::class.java)
-        ImageUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, ImageUtil.getBitmapFromImageView(iv_cover))
+        val cover = ImageUtil.getBitmapFromImageView(iv_cover)
+        if (cover == null) {
+            showAlert("Failed", "Failed to get cover the image.")
+            return@a
+        }
+        ImageUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, cover)
         RxActivityResult.on(this).startIntent(intent).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 val bm = ImageUtil.getImageFromExtra(r.data(), CropActivity.INTENT_BITMAP)
@@ -222,10 +219,15 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     private val onImageViewCoverLongClicked: (View) -> Boolean = {
-        showAlert("Save", "Save cover?", posText = "Save", posListener = { _, _ ->
+        showAlert("Save", "Save cover?", posText = "Save", posListener = a@{ _, _ ->
+            val cover = ImageUtil.getBitmapFromImageView(iv_cover)
+            if (cover == null) {
+                showAlert("Failed", "Failed to get the cover.")
+                return@a
+            }
+            val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
             try {
-                val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
-                ImageUtil.saveImage(this, contentResolver, ImageUtil.getBitmapFromImageView(iv_cover), desc, desc)
+                ImageUtil.saveImage(this, contentResolver, cover, desc, desc)
                 showToast("Save cover success")
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -236,32 +238,38 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     }
 
     private val onBtnRestoreClicked: (View) -> Unit = {
-        tagsPresenter.restore()
+        showAlert("Check", "Sure to restore?", posText = "Restore", posListener = { _, _ ->
+            tagsPresenter.restore()
+        }, negText = "Cancel")
     }
 
     private val onBtnSaveClicked: (View) -> Unit = {
         val filename = tagsPresenter.getFilename()
-        showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
-            if (text == filename) {
-                showAlert("Failed", "New filename couldn't be the same")
-            } else {
-                try {
-                    tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(), ImageUtil.getBitmapFromImageView(iv_cover))
-                    showAlert("Success", "Success to save $text.")
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    showAlert("Failed", "Failed to save $text.")
+        fun save() {
+            showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
+                if (text == filename) {
+                    showAlert("Failed", "New filename couldn't be the same")
+                    save()
+                    return@showInputDlg
                 }
-            }
-        }, negText = "Cancel")
+                val ok = tagsPresenter.save(
+                    text,
+                    edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
+                    ImageUtil.getBitmapFromImageView(iv_cover)
+                )
+                if (ok) {
+                    showAlert("Success", "Success to save $text.")
+                } else {
+                    showAlert("Failed", "Failed to save $text.")
+                    save()
+                }
+            }, negText = "Cancel")
+        }
+        save()
     }
 
     private val onMenuVideoClicked: () -> Unit = {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.type = "video/*"
-        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+        RxActivityResult.on(this).startIntent(openVideoIntent()).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 r.data().data?.let {
                     val path = PathUtil.getFilePathByUri(this, it)
@@ -283,7 +291,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
         if (requirePermission.isNotEmpty()) {
             showAlert(
-                title = "Permission", message = "This app need read and write storage permission.",
+                title = "Permission", message = "This app needs \"read and write storage\" permission.",
                 posText = "OK", posListener = { _, _ ->
                     ActivityCompat.requestPermissions(
                         this, requirePermission.toTypedArray(),

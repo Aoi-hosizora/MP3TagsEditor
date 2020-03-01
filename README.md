@@ -20,7 +20,7 @@
 
 + [mp3agic](https://github.com/mpatric/mp3agic)
 + [mobile-ffmpeg](https://github.com/tanersener/mobile-ffmpeg)
-+ [android-image-cropper]()
++ [android-image-cropper](https://github.com/ArthurHub/Android-Image-Cropper)
 
 ### Screenshots
 
