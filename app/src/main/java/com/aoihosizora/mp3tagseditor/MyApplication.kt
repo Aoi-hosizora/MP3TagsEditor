@@ -9,4 +9,16 @@ class MyApplication : Application() {
         super.onCreate()
         RxActivityResult.register(this)
     }
+
+    private var obj: Any? = null
+
+    fun getObject(): Any? = obj
+
+    fun setObject(obj: Any) {
+        this.obj = obj
+    }
+
+    fun clearObject() {
+        obj = null
+    }
 }

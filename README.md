@@ -31,3 +31,4 @@
 ### References
 
 + [cannot access Path class file for java.nio.file.Path not found](https://github.com/mpatric/mp3agic/issues/141)
++ [次のActivityにサイズの大きいBitmapを渡す方法](https://nvtrlab.jp/blog/penco/%E6%AC%A1%E3%81%AEactivity%E3%81%AB%E3%82%B5%E3%82%A4%E3%82%BA%E3%81%AE%E5%A4%A7%E3%81%8D%E3%81%84bitmap%E3%82%92%E6%B8%A1%E3%81%99.html)

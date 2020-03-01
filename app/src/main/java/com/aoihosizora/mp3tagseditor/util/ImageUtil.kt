@@ -15,6 +15,12 @@ import java.io.File
 
 object ImageUtil {
 
+    fun getBitmapByte(bm: Bitmap): Int {
+        val stream = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return bm.byteCount
+    }
+
     fun getBitmapFromUri(resolver: ContentResolver, uri: Uri): Bitmap? {
         return Images.Media.getBitmap(resolver, uri)
     }
@@ -31,15 +37,6 @@ object ImageUtil {
         val stream = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         return stream.toByteArray()
-    }
-
-    fun putImageToExtra(intent: Intent, name: String, bm: Bitmap) {
-        intent.putExtra(name, getJpegByteArrayFromBitmap(bm))
-    }
-
-    fun getImageFromExtra(intent: Intent, name: String): Bitmap? {
-        val arr = intent.getByteArrayExtra(name)
-        return getBitmapFromByteArray(arr)
     }
 
     fun saveImage(context: Context, contentResolver: ContentResolver, bm: Bitmap, title: String, description: String) {

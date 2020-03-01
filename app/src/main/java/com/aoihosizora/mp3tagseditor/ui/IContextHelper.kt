@@ -126,16 +126,13 @@ interface IContextHelper {
     }
 
     fun Context.openImageIntent(): Intent {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = Intent(Intent.ACTION_PICK)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         return intent
     }
 
     fun Context.openAudioIntent(): Intent {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra("oneshot", 0)
         intent.putExtra("configchange", 0)
@@ -145,7 +142,6 @@ interface IContextHelper {
 
     fun Context.openVideoIntent(): Intent {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra("oneshot", 0)
         intent.putExtra("configchange", 0)

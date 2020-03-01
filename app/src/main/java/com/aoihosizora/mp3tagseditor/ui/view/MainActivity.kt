@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
+import com.aoihosizora.mp3tagseditor.MyApplication
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
 import com.aoihosizora.mp3tagseditor.ui.contract.MainActivityContract
@@ -108,6 +109,8 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         initView(false)
     }
 
+    // region Play
+
     private val onBtnSwitchClicked: (View) -> Unit = {
         mediaPresenter.switch()
     }
@@ -150,6 +153,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     override fun onDestroy() {
         mediaPresenter.release()
+        (application as MyApplication).clearObject()
         super.onDestroy()
     }
 
@@ -170,11 +174,21 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    // endregion
+
     override fun loadTags(title: String, artist: String, album: String) {
         edt_title.setText(title)
         edt_artist.setText(artist)
         edt_album.setText(album)
     }
+
+    private val onBtnRestoreClicked: (View) -> Unit = {
+        showAlert("Check", "Sure to restore?", posText = "Restore", posListener = { _, _ ->
+            tagsPresenter.restore()
+        }, negText = "Cancel")
+    }
+
+    // region Cover
 
     /**
      * !!!
@@ -183,7 +197,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
             btn_crop_cover.isEnabled = true
-            txt_cover_size.text = "${cover.width}x${cover.height} ${cover.byteCount / 1024}KB"
+            txt_cover_size.text = "${cover.width}x${cover.height} ${ImageUtil.getBitmapByte(cover) / 1024}KB"
         } else {
             iv_cover.setImageResource(R.color.white)
             btn_crop_cover.isEnabled = false
@@ -209,12 +223,16 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             showAlert("Failed", "Failed to get cover the image.")
             return@a
         }
-        ImageUtil.putImageToExtra(intent, CropActivity.INTENT_BITMAP, cover)
-        RxActivityResult.on(this).startIntent(intent).subscribe { r ->
-            if (r.resultCode() == Activity.RESULT_OK) {
-                val bm = ImageUtil.getImageFromExtra(r.data(), CropActivity.INTENT_BITMAP)
-                loadCover(bm)
+        (application as MyApplication).setObject(cover)
+        try {
+            RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+                if (r.resultCode() == Activity.RESULT_OK) {
+                    val bm = (application as MyApplication).getObject() as? Bitmap
+                    loadCover(bm)
+                }
             }
+        } catch (ex: Exception) {
+            showAlert("", ex.message!!)
         }
     }
 
@@ -237,11 +255,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         true
     }
 
-    private val onBtnRestoreClicked: (View) -> Unit = {
-        showAlert("Check", "Sure to restore?", posText = "Restore", posListener = { _, _ ->
-            tagsPresenter.restore()
-        }, negText = "Cancel")
-    }
+    // endregion
 
     private val onBtnSaveClicked: (View) -> Unit = {
         val filename = tagsPresenter.getFilename()
@@ -285,6 +299,8 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    // region Permission
+
     private fun checkPermission() {
         val requirePermission: List<String> = ALL_PERMISSION.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
@@ -315,4 +331,6 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             }
         }
     }
+
+    // endregion
 }
