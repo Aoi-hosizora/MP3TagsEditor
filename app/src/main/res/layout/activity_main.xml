@@ -203,12 +203,12 @@
                 tools:ignore="HardcodedText" />
 
             <Button
-                android:id="@+id/btn_crop_cover"
+                android:id="@+id/btn_options"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:enabled="false"
-                android:text="Crop"
+                android:text="Options"
                 android:textAllCaps="false"
                 tools:ignore="HardcodedText" />
 
@@ -228,7 +228,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="cover"
-            android:src="@color/white"
+            android:src="@color/transparent"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>

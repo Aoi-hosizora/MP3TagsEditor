@@ -42,14 +42,21 @@ class MainActivityTagsPresenter(
         }
     }
 
-    override fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?): Boolean {
+    override fun setCover(bitmap: Bitmap?) {
+        mp3File?.id3v2Tag?.let {
+            if (bitmap == null) {
+                it.clearAlbumImage()
+            } else {
+                it.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(bitmap), "image/jpg")
+            }
+        }
+    }
+
+    override fun save(filename: String, title: String, artist: String, album: String): Boolean {
         mp3File?.let {
             it.id3v2Tag.title = title
             it.id3v2Tag.artist = artist
             it.id3v2Tag.album = album
-            cover?.let { bm ->
-                it.id3v2Tag.setAlbumImage(ImageUtil.getJpegByteArrayFromBitmap(bm), "image/jpg")
-            }
             return try {
                 it.save(filename)
                 true

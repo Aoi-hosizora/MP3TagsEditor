@@ -39,9 +39,10 @@ interface MainActivityContract {
         val view: View
 
         fun load(path: String)
-        fun save(filename: String, title: String, artist: String, album: String, cover: Bitmap?): Boolean
-        fun getFilename(): String
         fun restore()
+        fun getFilename(): String
         fun getFilenameWithoutExt(): String
+        fun setCover(bitmap: Bitmap?)
+        fun save(filename: String, title: String, artist: String, album: String): Boolean
     }
 }

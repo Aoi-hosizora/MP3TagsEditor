@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.SeekBar
 import com.aoihosizora.mp3tagseditor.MyApplication
 import com.aoihosizora.mp3tagseditor.R
@@ -76,11 +77,21 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         btn_switch.setOnClickListener(onBtnSwitchClicked)
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
 
-        btn_crop_cover.setOnClickListener(onBtnCropCoverClicked)
         btn_choose_cover.setOnClickListener(onBtnChooseCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
         btn_restore.setOnClickListener(onBtnRestoreClicked)
-        iv_cover.setOnLongClickListener(onImageViewCoverLongClicked)
+
+        val popupMenu = PopupMenu(this, btn_options)
+        menuInflater.inflate(R.menu.activity_main_options, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_crop -> onMenuCropCoverClicked()
+                R.id.menu_remove -> onMenuRemoveCoverClicked()
+                R.id.menu_save -> onMenuSaveCoverClicked()
+            }
+            true
+        }
+        btn_options.setOnClickListener { popupMenu.show() }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -196,13 +207,19 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     override fun loadCover(cover: Bitmap?) {
         if (cover != null) {
             iv_cover.setImageBitmap(cover)
-            btn_crop_cover.isEnabled = true
+            btn_options.isEnabled = true
             txt_cover_size.text = "${cover.width} x ${cover.height}"
         } else {
-            iv_cover.setImageResource(R.color.white)
-            btn_crop_cover.isEnabled = false
+            iv_cover.setImageResource(R.color.transparent)
+            btn_options.isEnabled = false
             txt_cover_size.text = "Blank"
         }
+    }
+
+    private val onMenuRemoveCoverClicked: () -> Unit = {
+        iv_cover.setImageResource(android.R.color.transparent)
+        btn_options.isEnabled = false
+        txt_cover_size.text = "Blank"
     }
 
     private val onBtnChooseCoverClicked: (View) -> Unit = {
@@ -216,7 +233,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
-    private val onBtnCropCoverClicked: (View) -> Unit = a@{
+    private val onMenuCropCoverClicked: () -> Unit = a@{
         val intent = Intent(this, CropActivity::class.java)
         val cover = ImageUtil.getBitmapFromImageView(iv_cover)
         if (cover == null) {
@@ -236,7 +253,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
-    private val onImageViewCoverLongClicked: (View) -> Boolean = {
+    private val onMenuSaveCoverClicked: () -> Unit = {
         showAlert("Save", "Save cover?", posText = "Save", posListener = a@{ _, _ ->
             val cover = ImageUtil.getBitmapFromImageView(iv_cover)
             if (cover == null) {
@@ -252,7 +269,6 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 showAlert("Failed", "Failed to save the cover.")
             }
         }, negText = "Cancel")
-        true
     }
 
     // endregion
@@ -266,11 +282,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                     save()
                     return@showInputDlg
                 }
-                val ok = tagsPresenter.save(
-                    text,
-                    edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
-                    ImageUtil.getBitmapFromImageView(iv_cover)
-                )
+
+                tagsPresenter.setCover(ImageUtil.getBitmapFromImageView(iv_cover))
+                val ok = tagsPresenter.save(text, edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString())
                 if (ok) {
                     showAlert("Success", "Success to save $text.")
                 } else {

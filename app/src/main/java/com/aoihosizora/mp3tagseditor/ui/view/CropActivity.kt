@@ -38,14 +38,14 @@ class CropActivity : AppCompatActivity(), IContextHelper {
         }
         iv_crop.setImageBitmap(bm!!)
         updateScaleSize()
-        iv_crop.setOnCropWindowChangedListener { updateScaleSize() }
+        iv_crop.setOnSetCropOverlayMovedListener { updateScaleSize() }
 
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.setOnMenuItemClickListener { onMenuItemClickListener(it) }
     }
 
     private fun updateScaleSize() {
-        txt_scale_size.text = "Current size: ${iv_crop.cropWindowRect.width()} x ${iv_crop.cropWindowRect.height()}"
+        txt_scale_size.text = "Current size: ${iv_crop.cropWindowRect.width().toInt()} x ${iv_crop.cropWindowRect.height().toInt()}"
     }
 
     private fun onMenuItemClickListener(item: MenuItem): Boolean {
