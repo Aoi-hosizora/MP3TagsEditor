@@ -282,24 +282,29 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
     private val onBtnSaveClicked: (View) -> Unit = {
         val filename = tagsPresenter.getFilename()
         fun save() {
-            showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
-                if (text == filename) {
-                    showAlert("Failed", "New filename couldn't be the same")
-                    save()
-                    return@showInputDlg
-                }
-
+            fun innerSave(path: String) {
                 val metadata = Metadata(
                     edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
                     edt_year.text.toString(), edt_track.text.toString(), edt_genre.text.toString().toInt(),
                     edt_album_artist.text.toString(), edt_composer.text.toString()
                 )
-                val ok = tagsPresenter.save(text, metadata, ImageUtil.getBitmapFromImageView(iv_cover))
+                val ok = tagsPresenter.save(path, metadata, ImageUtil.getBitmapFromImageView(iv_cover))
                 if (ok) {
-                    showToast("Success to save $text")
+                    showToast("Success to save $path")
                 } else {
-                    showAlert("Failed", "Failed to save music $text.")
+                    showAlert("Failed", "Failed to save music $path.")
                     save()
+                }
+            }
+            showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
+                val file = File(text)
+                if (file.exists()) {
+                    showAlert("Save", "File has existed, overwrite it?", posText = "Overwrite", posListener = { _, _ ->
+                        file.delete()
+                        innerSave(text)
+                    }, negText = "Cancel")
+                } else {
+                    innerSave(text)
                 }
             }, negText = "Cancel")
         }

@@ -54,7 +54,7 @@ object PathUtil {
                 return getDataColumn(context, contentUri)
             } else if (isAmazeFileManagerDocument(uri)) { // AmazeFileManager
                 val path = uri.path ?: return ""
-                return path.substring("/storage_root".length)
+                return path.substring("/storage_root".length - 1)
             } else if (isMediaDocument(uri)) { // MediaProvider
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
