@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_widget"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:divider="@drawable/spacer_medium"
     android:gravity="center_vertical"
     android:showDividers="middle">
@@ -12,7 +12,7 @@
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginEnd="8dp" />
 
     <ImageView
@@ -42,8 +42,9 @@
     <TextView
         android:id="@+id/txt_message"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
+        android:gravity="center_vertical"
         android:text="" />
 
 </LinearLayout>

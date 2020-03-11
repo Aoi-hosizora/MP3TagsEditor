@@ -27,16 +27,40 @@ class ResultView @JvmOverloads constructor(
         Init, Running, Success, Failed, Cancel
     }
 
-    private var state: State
+    var state: State = State.Init
 
-    private var _message: String = ""
-    private var _runningText: String = "Running"
-    private var _successText: String = "Success"
-    private var _failedText: String = "Failed"
-    private var _cancelText: String = "Cancel"
+    var message: String = ""
+        set(value) {
+            field = value
+            update()
+        }
+
+    var runningText: String = "Running"
+        set(value) {
+            field = value
+            update()
+        }
+
+    var successText: String = "Success"
+        set(value) {
+            field = value
+            update()
+        }
+
+    var failedText: String = "Failed"
+        set(value) {
+            field = value
+            update()
+        }
+
+    var cancelText: String = "Cancel"
+        set(value) {
+            field = value
+            update()
+        }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.widget_result, this, true)
+        LayoutInflater.from(context).inflate(R.layout.widget_result, this)
 
         progress = findViewById(R.id.progress)
         iv_success = findViewById(R.id.iv_success)
@@ -54,45 +78,8 @@ class ResultView @JvmOverloads constructor(
             typedArray.recycle()
         }
 
-        state = State.Init
-
         init()
     }
-
-    var message: String
-        get() = _message
-        set(value) {
-            _message = value
-            update()
-        }
-
-    var runningText: String
-        get() = _runningText
-        set(value) {
-            _runningText = value
-            update()
-        }
-
-    var successText: String
-        get() = _successText
-        set(value) {
-            _successText = value
-            update()
-        }
-
-    var failedText: String
-        get() = _failedText
-        set(value) {
-            _failedText = value
-            update()
-        }
-
-    var cancelText: String
-        get() = _cancelText
-        set(value) {
-            _cancelText = value
-            update()
-        }
 
     fun init() {
         state = State.Init

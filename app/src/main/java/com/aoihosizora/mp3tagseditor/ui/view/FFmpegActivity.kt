@@ -59,7 +59,7 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
             r.data().data?.let {
                 val path = PathUtil.getFilePathByUri(this, it)
                 showAlert(
-                    title = "Reference", message = "Selected:\n$path.",
+                    title = "Reference", message = "Selected:\n$path",
                     posText = "Copy", posListener = { _, _ ->
                         copyText(path)
                         showToast("Success to copy")
