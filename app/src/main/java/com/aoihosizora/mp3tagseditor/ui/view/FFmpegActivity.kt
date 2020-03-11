@@ -2,28 +2,45 @@
 
 package com.aoihosizora.mp3tagseditor.ui.view
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
-import com.aoihosizora.mp3tagseditor.ui.contract.VideoActivityContract
-import com.aoihosizora.mp3tagseditor.ui.presenter.VideoActivityPresenter
-import kotlinx.android.synthetic.main.activity_video.*
+import com.aoihosizora.mp3tagseditor.ui.contract.FFmpegActivityContract
+import com.aoihosizora.mp3tagseditor.ui.presenter.FFmpegActivityPresenter
+import com.aoihosizora.mp3tagseditor.util.PathUtil
+import kotlinx.android.synthetic.main.activity_ffmpeg.*
+import rx_activity_result2.RxActivityResult
 
-class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract.View {
+class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContract.View {
 
-    override val presenter = VideoActivityPresenter(this)
+    override val presenter = FFmpegActivityPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video)
+        setContentView(R.layout.activity_ffmpeg)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        presenter.initData(intent)
         initView()
+    }
+
+    private fun initView() {
+        txt_output.movementMethod = ScrollingMovementMethod()
+        progress.visibility = View.GONE
+        iv_success.visibility = View.GONE
+        iv_failed.visibility = View.GONE
+
+        btn_run.setOnClickListener(onBtnRunClicked)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_ffmpeg_menu, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -31,23 +48,32 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
             return false
         }
         when (item.itemId) {
-            android.R.id.home -> onBackPressed()
+            android.R.id.home -> finish()
+            R.id.menu_reference -> onMenuReferenceClicked()
         }
         return true
     }
 
-    private fun initView() {
-        txt_filename.text = "Opening: ${presenter.getPath()}"
-        txt_output.movementMethod = ScrollingMovementMethod()
-        progress.visibility = View.GONE
-        iv_success.visibility = View.GONE
-        iv_failed.visibility = View.GONE
-
-        btn_run.setOnClickListener(onBtnRunClicked)
-        btn_copy.setOnClickListener(onBtnCopyClicked)
-        btn_to_mp3.setOnClickListener { presenter.toMusic("mp3") }
-        btn_to_m4a.setOnClickListener { presenter.toMusic("m4a") }
-        btn_help.setOnClickListener(onBtnHelpClicked)
+    private val onMenuReferenceClicked: () -> Unit = {
+        RxActivityResult.on(this).startIntent(openAudioVideoIntent()).subscribe { r ->
+            if (r.resultCode() != Activity.RESULT_OK) {
+                return@subscribe
+            }
+            r.data().data?.let {
+                val path = PathUtil.getFilePathByUri(this, it)
+                showAlert(
+                    title = "Reference", message = "Selected:\n$path.",
+                    posText = "Copy", posListener = { _, _ ->
+                        copyText(path)
+                        showToast("Success to copy")
+                    },
+                    negText = "Insert", negListener = { _, _ ->
+                        edt_command.append(path)
+                    },
+                    netText = "Cancel", netListener = null
+                )
+            }
+        }
     }
 
     private val onBtnRunClicked: (View) -> Unit = {
@@ -57,19 +83,6 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         } else {
             presenter.run(command)
         }
-    }
-
-    private val onBtnCopyClicked: (View) -> Unit = {
-        copyText(presenter.getPath())
-        showToast("Success to copy")
-    }
-
-    private val onBtnHelpClicked: (View) -> Unit = {
-        openBrowser("http://ffmpeg.org/ffmpeg.html")
-    }
-
-    override fun setScript(command: String) {
-        edt_command.setText(command)
     }
 
     override fun startRun(command: String) {

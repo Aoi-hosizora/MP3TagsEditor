@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
         when (item.itemId) {
             R.id.menu_video -> onMenuVideoClicked()
+            R.id.menu_ffmpeg -> onMenuFFmpegClicked()
         }
         return true
     }
@@ -337,6 +338,11 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    private val onMenuFFmpegClicked: () -> Unit = {
+        val intent = Intent(this, FFmpegActivity::class.java)
+        startActivity(intent)
+    }
+
     // region Permission
 
     private fun checkPermission() {
@@ -362,7 +368,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 showAlert(
                     title = "Failed", message = "Grant permission failed.",
-                    posText = "Close", posListener = { _, _ -> exitProcess(1) }
+                    posText = "Close", posListener = { _, _ -> finish() }
                 )
             } else {
                 showToast("Success to grant permission")

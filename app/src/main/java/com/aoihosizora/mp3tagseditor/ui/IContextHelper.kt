@@ -4,9 +4,7 @@ package com.aoihosizora.mp3tagseditor.ui
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
@@ -45,14 +43,14 @@ interface IContextHelper {
     }
 
     fun Context.showAlert(
-        title: CharSequence, view: View,
+        title: CharSequence, message: CharSequence,
         posText: CharSequence, posListener: ((DialogInterface, Int) -> Unit)? = null,
         negText: CharSequence, negListener: ((DialogInterface, Int) -> Unit)? = null,
         netText: CharSequence, netListener: ((DialogInterface, Int) -> Unit)? = null
     ) {
         AlertDialog.Builder(this)
             .setTitle(title)
-            .setView(view)
+            .setMessage(message)
             .setPositiveButton(posText, posListener)
             .setNegativeButton(negText, negListener)
             .setNeutralButton(netText, netListener)
@@ -126,6 +124,12 @@ interface IContextHelper {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAction(action, listener).show()
     }
 
+    fun Context.copyText(text: CharSequence) {
+        val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Label", text)
+        cm.primaryClip = clipData
+    }
+
     fun Context.openBrowser(url: String) {
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -135,6 +139,13 @@ interface IContextHelper {
     fun Context.openImageIntent(): Intent {
         val intent = Intent(Intent.ACTION_PICK)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+        return intent
+    }
+
+    fun Context.openAudioVideoIntent(): Intent {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.type = "*/*"
         return intent
     }
 

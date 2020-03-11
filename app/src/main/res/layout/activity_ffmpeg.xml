@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/pageMarginHorizontal"
+    android:layout_marginTop="@dimen/pageMarginVertical"
+    android:layout_marginRight="@dimen/pageMarginHorizontal"
+    android:layout_marginBottom="@dimen/pageMarginVertical"
+    android:divider="@drawable/spacer_medium"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    tools:context=".ui.view.FFmpegActivity">
+
+    <EditText
+        android:id="@+id/edt_command"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="Enter command here, such as -version"
+        android:text=""
+        android:textSize="20sp"
+        tools:ignore="Autofill,HardcodedText,TextFields" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:divider="@drawable/spacer_medium"
+        android:gravity="center_vertical"
+        android:showDividers="middle">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp" />
+
+        <ImageView
+            android:id="@+id/iv_success"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_ok_theme_48dp"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/iv_failed"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_failed_theme_48dp"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/txt_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Please run command first..."
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_output"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:scrollbars="vertical"
+        android:textIsSelectable="true"
+        tools:ignore="HardcodedText" />
+
+    <include
+        layout="@layout/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/spacer_medium"
+        android:gravity="center_horizontal"
+        android:showDividers="middle"
+        android:textIsSelectable="true">
+
+        <Button
+            android:id="@+id/btn_run"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Run"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+</LinearLayout>
