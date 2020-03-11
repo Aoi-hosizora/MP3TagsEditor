@@ -6,5 +6,5 @@
     <dimen name="itemSpaceVertical">4dp</dimen>
 
     <dimen name="settingLabelWidth">45dp</dimen>
-    <dimen name="settingLabelWidthLong">80dp</dimen>
+    <dimen name="settingLabelWidthLong">85dp</dimen>
 </resources>

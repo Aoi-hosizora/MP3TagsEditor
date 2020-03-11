@@ -281,34 +281,35 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     private val onBtnSaveClicked: (View) -> Unit = {
         val filename = tagsPresenter.getFilename()
-        fun save() {
-            fun innerSave(path: String) {
-                val metadata = Metadata(
-                    edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
-                    edt_year.text.toString(), edt_track.text.toString(), edt_genre.text.toString().toInt(),
-                    edt_album_artist.text.toString(), edt_composer.text.toString()
-                )
-                val ok = tagsPresenter.save(path, metadata, ImageUtil.getBitmapFromImageView(iv_cover))
-                if (ok) {
-                    showToast("Success to save $path")
-                } else {
-                    showAlert("Failed", "Failed to save music $path.")
-                    save()
-                }
+        fun save(path: String, fakeName: String = path) {
+            val metadata = Metadata(
+                edt_title.text.toString(), edt_artist.text.toString(), edt_album.text.toString(),
+                edt_year.text.toString(), edt_track.text.toString(), edt_genre.text.toString().toInt(),
+                edt_album_artist.text.toString(), edt_composer.text.toString()
+            )
+            val ok = tagsPresenter.save(path, metadata, ImageUtil.getBitmapFromImageView(iv_cover))
+            if (ok) {
+                showToast("Success to save $fakeName")
+            } else {
+                showAlert("Failed", "Failed to save music $fakeName.")
             }
-            showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
-                val file = File(text)
-                if (file.exists()) {
-                    showAlert("Save", "File has existed, overwrite it?", posText = "Overwrite", posListener = { _, _ ->
-                        file.delete()
-                        innerSave(text)
-                    }, negText = "Cancel")
-                } else {
-                    innerSave(text)
-                }
-            }, negText = "Cancel")
         }
-        save()
+
+        showInputDlg(title = "Filename", text = filename, posText = "Save", posClick = { _, _, text ->
+            val file = File(text)
+            if (file.exists()) {
+                showAlert("Save", "File has existed, overwrite it?", posText = "Overwrite", posListener = { _, _ ->
+                    val newFilename = "$text-${PathUtil.getTimeUuid()}"
+                    save(newFilename, text)
+                    file.delete()
+                    if (!File(newFilename).renameTo(File(text))) {
+                        showAlert("Failed", "Failed to save music $text, temp file have been saved in $newFilename.")
+                    }
+                }, negText = "Cancel")
+            } else {
+                save(text)
+            }
+        }, negText = "Cancel")
     }
 
     private val onMenuVideoClicked: () -> Unit = {

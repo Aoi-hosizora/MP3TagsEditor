@@ -8,6 +8,7 @@
 + [x] Load and write cover(jpg)
 + [x] Convert video to mp3
 + [x] Crop and save cover
++ [ ] Crop music
 
 ### Environments
 

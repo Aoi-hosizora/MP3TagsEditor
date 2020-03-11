@@ -7,10 +7,15 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import java.io.File
-import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 object PathUtil {
+
+    fun getTimeUuid(): String {
+        val fmt = SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.CHINA)
+        return fmt.format(Date())
+    }
 
     fun getFilenameWithoutExt(filename: String): String {
         val idx = filename.indexOf(".")
