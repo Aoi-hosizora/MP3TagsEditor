@@ -134,6 +134,10 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
             initView(false)
             return
         }
+        if (!PathUtil.checkIsVideo(filepath)) {
+            showAlert("Failed", "$filepath is not a video or a unsupported type.")
+            return
+        }
 
         val filename = filepath.split(File.separator).last()
         val mb = File(filepath).length() / 1024 / 1024.0
@@ -319,6 +323,10 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                     val path = PathUtil.getFilePathByUri(this, it)
                     if (path.isBlank()) {
                         showAlert("Failed", "File not found")
+                        return@let
+                    }
+                    if (!PathUtil.checkIsAudio(path)) {
+                        showAlert("Failed", "$path is not a video or a unsupported type.")
                         return@let
                     }
                     val videoIntent = Intent(this, VideoActivity::class.java)

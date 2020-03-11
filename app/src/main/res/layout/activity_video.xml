@@ -40,6 +40,49 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fast commands:"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/spacer_medium"
+        android:gravity="center_horizontal"
+        android:showDividers="middle"
+        android:textIsSelectable="true">
+
+        <Button
+            android:id="@+id/btn_to_mp3"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To mp3"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btn_to_m4a"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To m4a"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btn_help"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Help"
+            android:textAllCaps="false"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/edt_command"
         android:layout_width="match_parent"
@@ -112,15 +155,6 @@
         android:gravity="center_horizontal"
         android:showDividers="middle"
         android:textIsSelectable="true">
-
-        <Button
-            android:id="@+id/btn_to_mp3"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="To mp3"
-            android:textAllCaps="false"
-            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/btn_run"

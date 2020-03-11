@@ -12,13 +12,35 @@ import java.util.*
 
 object PathUtil {
 
+    // https://blog.csdn.net/jaycee110905/article/details/8761954
+    private val AudioType = listOf("MP3", "M4A", "WAV", "WMA")
+    private val VideoType = listOf("MP4", "M4V", "FLV", "BLV")
+
+    fun checkIsAudio(filename: String): Boolean {
+        val ext = getFilenameExt(filename)
+        return AudioType.indexOf(ext) != -1
+    }
+
+    fun checkIsVideo(filename: String): Boolean {
+        val ext = getFilenameExt(filename)
+        return VideoType.indexOf(ext) != -1
+    }
+
+    private fun getFilenameExt(filename: String): String {
+        val idx = filename.lastIndexOf(".")
+        if (idx == -1) {
+            return ""
+        }
+        return filename.substring(idx + 1).toUpperCase(Locale.US)
+    }
+
     fun getTimeUuid(): String {
         val fmt = SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.CHINA)
         return fmt.format(Date())
     }
 
     fun getFilenameWithoutExt(filename: String): String {
-        val idx = filename.indexOf(".")
+        val idx = filename.lastIndexOf(".")
         return if (idx == -1) filename else filename.substring(0, idx)
     }
 

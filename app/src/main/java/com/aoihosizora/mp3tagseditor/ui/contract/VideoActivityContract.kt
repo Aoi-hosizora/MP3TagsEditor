@@ -20,6 +20,6 @@ interface VideoActivityContract {
         fun initData(intent: Intent)
         fun getPath(): String
         fun run(command: String)
-        fun toMp3()
+        fun toMusic(ext: String)
     }
 }

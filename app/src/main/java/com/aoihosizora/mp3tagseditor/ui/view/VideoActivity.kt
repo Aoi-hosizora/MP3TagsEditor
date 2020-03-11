@@ -48,7 +48,9 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
 
         btn_run.setOnClickListener(onBtnRunClicked)
         btn_copy.setOnClickListener(onBtnCopyClicked)
-        btn_to_mp3.setOnClickListener { presenter.toMp3() }
+        btn_to_mp3.setOnClickListener { presenter.toMusic("mp3") }
+        btn_to_m4a.setOnClickListener { presenter.toMusic("m4a") }
+        btn_help.setOnClickListener(onBtnHelpClicked)
     }
 
     private val onBtnRunClicked: (View) -> Unit = {
@@ -65,6 +67,10 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         val clipData = ClipData.newPlainText("Label", presenter.getPath())
         cm.primaryClip = clipData
         showToast("Success to copy")
+    }
+
+    private val onBtnHelpClicked: (View) -> Unit = {
+        openBrowser("http://ffmpeg.org/ffmpeg.html")
     }
 
     override fun setScript(command: String) {

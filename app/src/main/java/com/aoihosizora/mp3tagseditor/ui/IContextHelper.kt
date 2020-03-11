@@ -7,6 +7,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -123,6 +124,12 @@ interface IContextHelper {
         action: CharSequence, listener: ((View) -> Unit)? = null
     ) {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAction(action, listener).show()
+    }
+
+    fun Context.openBrowser(url: String) {
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
     }
 
     fun Context.openImageIntent(): Intent {

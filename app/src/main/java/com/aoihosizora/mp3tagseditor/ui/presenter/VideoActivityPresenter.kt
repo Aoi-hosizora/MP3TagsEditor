@@ -41,9 +41,10 @@ class VideoActivityPresenter(
         }).start()
     }
 
-    override fun toMp3() {
-        fun wrap(str: String): String = if (str.indexOf(" ") != -1) "\"$str\"" else str
-        val mp3Path = PathUtil.getFilenameWithoutExt(getPath()) + ".mp3"
+    private fun wrap(str: String): String = if (str.indexOf(" ") != -1) "\"$str\"" else str
+
+    override fun toMusic(ext: String) {
+        val mp3Path = PathUtil.getFilenameWithoutExt(getPath()) + ".$ext"
         view.setScript("-y -i ${wrap(getPath())} ${wrap(mp3Path)}")
     }
 }
