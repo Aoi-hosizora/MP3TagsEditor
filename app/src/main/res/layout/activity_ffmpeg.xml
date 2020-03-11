@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,45 +25,15 @@
         android:textSize="20sp"
         tools:ignore="Autofill,HardcodedText,TextFields" />
 
-    <LinearLayout
+    <com.aoihosizora.mp3tagseditor.widget.ResultView
+        android:id="@+id/view_result"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:divider="@drawable/spacer_medium"
-        android:gravity="center_vertical"
-        android:showDividers="middle">
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp" />
-
-        <ImageView
-            android:id="@+id/iv_success"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_ok_theme_48dp"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/iv_failed"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_failed_theme_48dp"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/txt_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Please run command first..."
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
+        android:layout_height="48dp"
+        app:cancelText="Cancel"
+        app:failedText="Failed"
+        app:message="Please run command first..."
+        app:runningText="Running..."
+        app:successText="Success" />
 
     <TextView
         android:id="@+id/txt_output"

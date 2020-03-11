@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_widget"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@drawable/spacer_medium"
+    android:gravity="center_vertical"
+    android:showDividers="middle">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp" />
+
+    <ImageView
+        android:id="@+id/iv_success"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_success_theme_48dp"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/iv_failed"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_failed_theme_48dp"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/iv_cancel"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_cancel_theme_48dp"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/txt_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="" />
+
+</LinearLayout>

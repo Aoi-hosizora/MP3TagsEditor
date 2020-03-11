@@ -31,9 +31,6 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
 
     private fun initView() {
         txt_output.movementMethod = ScrollingMovementMethod()
-        progress.visibility = View.GONE
-        iv_success.visibility = View.GONE
-        iv_failed.visibility = View.GONE
 
         btn_run.setOnClickListener(onBtnRunClicked)
     }
@@ -86,24 +83,22 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
     }
 
     override fun startRun(command: String) {
-        progress.visibility = View.VISIBLE
-        iv_success.visibility = View.GONE
-        iv_failed.visibility = View.GONE
+        view_result.startRun()
 
         edt_command.isEnabled = false
         btn_run.isEnabled = false
         txt_output.text = ""
-        txt_message.text = "Running..."
     }
 
     override fun finishRun(isSuccess: Boolean, message: String) {
-        progress.visibility = View.GONE
-        iv_success.visibility = if (isSuccess) View.VISIBLE else View.GONE
-        iv_failed.visibility = if (!isSuccess) View.VISIBLE else View.GONE
+        if (isSuccess) {
+            view_result.success()
+        } else {
+            view_result.failed()
+        }
 
         edt_command.isEnabled = true
         btn_run.isEnabled = true
-        txt_message.text = if (isSuccess) "Success" else "Failed"
     }
 
     override fun updateOutput(content: String) {
