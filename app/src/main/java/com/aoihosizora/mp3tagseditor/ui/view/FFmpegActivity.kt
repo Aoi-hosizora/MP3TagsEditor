@@ -26,6 +26,7 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         setContentView(R.layout.activity_ffmpeg)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        title = "FFmpeg tool"
         initView()
     }
 

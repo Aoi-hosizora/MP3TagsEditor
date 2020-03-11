@@ -22,6 +22,7 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         setContentView(R.layout.activity_video)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        title = "Video converter"
         presenter.initData(intent)
         initView()
     }

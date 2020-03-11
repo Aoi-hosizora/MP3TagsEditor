@@ -30,7 +30,6 @@ import com.aoihosizora.mp3tagseditor.util.PathUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import rx_activity_result2.RxActivityResult
 import java.io.File
-import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.View {
@@ -110,7 +109,6 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         RxActivityResult.on(this).startIntent(openAudioIntent()).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
                 r.data().data?.let {
-                    initView(true)
                     loadMusic(it)
                 }
             }
@@ -132,13 +130,13 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         val filepath = PathUtil.getFilePathByUri(this, uri)
         if (filepath.isBlank()) {
             showAlert("Failed", "File not found.")
-            initView(false)
             return
         }
-        if (!PathUtil.checkIsVideo(filepath)) {
-            showAlert("Failed", "$filepath is not a video or a unsupported type.")
+        if (!PathUtil.checkIsAudio(filepath)) {
+            showAlert("Failed", "$filepath is not a audio or an unsupported type.")
             return
         }
+        initView(true)
 
         val filename = filepath.split(File.separator).last()
         val mb = File(filepath).length() / 1024 / 1024.0
@@ -323,11 +321,11 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
                 r.data().data?.let {
                     val path = PathUtil.getFilePathByUri(this, it)
                     if (path.isBlank()) {
-                        showAlert("Failed", "File not found")
+                        showAlert("Failed", "File not found.")
                         return@let
                     }
-                    if (!PathUtil.checkIsAudio(path)) {
-                        showAlert("Failed", "$path is not a video or a unsupported type.")
+                    if (!PathUtil.checkIsVideo(path)) {
+                        showAlert("Failed", "$path is not a video or an unsupported type.")
                         return@let
                     }
                     val videoIntent = Intent(this, VideoActivity::class.java)

@@ -8,6 +8,7 @@
 + [x] Load and write cover(jpg)
 + [x] Convert video to mp3
 + [x] Crop and save cover
++ [x] FFmpeg tool
 + [ ] Crop music
 
 ### Environments
@@ -29,6 +30,8 @@
 ![Screenshot2](./assets/Screenshot2.jpg)
 
 ![Screenshot3](./assets/Screenshot3.jpg)
+
+![Screenshot4](./assets/Screenshot4.jpg)
 
 ### References
 
