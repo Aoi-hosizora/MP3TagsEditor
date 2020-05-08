@@ -1,9 +1,11 @@
 package com.aoihosizora.mp3tagseditor.util
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -44,7 +46,10 @@ object PathUtil {
         return if (idx == -1) filename else filename.substring(0, idx)
     }
 
+    @SuppressLint("ObsoleteSdkInt")
+    @Suppress("CascadeIf")
     fun getFilePathByUri(context: Context, uri: Uri): String {
+        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
         if (uri.path == null) {
             return ""
         }
@@ -54,17 +59,16 @@ object PathUtil {
             return uri.path ?: ""
         }
 
-        // 2. content://media/external/audio/media/222
-        if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            val path = getDataColumn(context, uri)
-            if (path.isNotBlank()) {
-                return path
-            }
+        // 2. customer
+        // 2. content://com.amaze.filemanager/storage_root/storage/emulated/0/xxx
+        if (isAmazeFileManagerDocument(uri)) { // AmazeFileManager
+            val path = uri.path ?: return ""
+            return path.substring("/storage_root".length)
         }
 
-        // 3. content://com.amaze.filemanager/storage_root/storage/emulated/0/xxx
-        // 3. content://com.android.providers.media.documents/document/image%3A235700
-        if (uri.scheme == ContentResolver.SCHEME_CONTENT && DocumentsContract.isDocumentUri(context, uri)) {
+        // 3. KITKAT docUri
+        // 3. content://com.android.providers.media.documents/document/audio%3A8518 (%3A :)
+        if (isKitKat && DocumentsContract.isDocumentUri(context.applicationContext, uri)) {
             if (isExternalStorageDocument(uri)) { // ExternalStorageProvider
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
@@ -72,6 +76,7 @@ object PathUtil {
                 if ("primary".equals(type, ignoreCase = true)) {
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 }
+                return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
             } else if (isDownloadsDocument(uri)) { // DownloadsProvider
                 val id = DocumentsContract.getDocumentId(uri)
                 val contentUri = ContentUris.withAppendedId(
@@ -79,9 +84,6 @@ object PathUtil {
                     java.lang.Long.valueOf(id)
                 )
                 return getDataColumn(context, contentUri)
-            } else if (isAmazeFileManagerDocument(uri)) { // AmazeFileManager
-                val path = uri.path ?: return ""
-                return path.substring("/storage_root".length - 1)
             } else if (isMediaDocument(uri)) { // MediaProvider
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
@@ -94,12 +96,22 @@ object PathUtil {
                 return getDataColumn(context, contentUri, "_id=?", arrayOf(split[1]))
             }
         }
+
+        // 4. content://media/external/audio/media/222
+        if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val path = getDataColumn(context, uri)
+            if (path.isNotBlank()) {
+                return path
+            }
+        }
+
         return ""
     }
 
     private fun getDataColumn(context: Context, uri: Uri, selection: String? = null, selectionArgs: Array<String>? = null): String {
-        val column = "_data" // MediaStore.Audio.Media.DATA
-        val cursor = context.contentResolver.query(uri, arrayOf(column), selection, selectionArgs, null)
+        val column = MediaStore.Audio.Media.DATA // _data
+        val projection = arrayOf(column)
+        val cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 return try {
