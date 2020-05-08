@@ -9,6 +9,7 @@
     android:layout_marginRight="@dimen/pageMarginHorizontal"
     android:layout_marginBottom="@dimen/pageMarginVertical"
     android:divider="@drawable/spacer_medium"
+    android:elevation="4dp"
     android:orientation="vertical"
     android:showDividers="middle"
     tools:context=".ui.view.MainActivity">
@@ -320,7 +321,7 @@
                 tools:ignore="HardcodedText" />
 
             <Button
-                android:id="@+id/btn_choose_cover"
+                android:id="@+id/btn_replace_cover"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

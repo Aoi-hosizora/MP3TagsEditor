@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         btn_switch.setOnClickListener(onBtnSwitchClicked)
         seekbar.setOnSeekBarChangeListener(onSeekBarChange)
 
-        btn_choose_cover.setOnClickListener(onBtnChooseCoverClicked)
+        btn_replace_cover.setOnClickListener(onBtnReplaceCoverClicked)
         btn_save.setOnClickListener(onBtnSaveClicked)
         btn_restore.setOnClickListener(onBtnRestoreClicked)
 
@@ -105,27 +105,9 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         return true
     }
 
-    private val onBtnOpenClicked: (View) -> Unit = {
-        RxActivityResult.on(this).startIntent(openAudioIntent()).subscribe { r ->
-            if (r.resultCode() == Activity.RESULT_OK) {
-                r.data().data?.let {
-                    loadMusic(it)
-                }
-            }
-        }
-    }
-
-    private val onBtnCloseClicked: (View) -> Unit = {
-        mediaPresenter.release()
-        initView(false)
-    }
-
-    // region Play
-
-    private val onBtnSwitchClicked: (View) -> Unit = {
-        mediaPresenter.switch()
-    }
-
+    /**
+     * !!! load music path, check type, init tags and media
+     */
     private fun loadMusic(uri: Uri) {
         val filepath = PathUtil.getFilePathByUri(this, uri)
         if (filepath.isBlank()) {
@@ -152,6 +134,58 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    // region Play
+
+    /**
+     * btn: open and load music (not check)
+     */
+    private val onBtnOpenClicked: (View) -> Unit = {
+        RxActivityResult.on(this).startIntent(openAudioIntent()).subscribe { r ->
+            if (r.resultCode() == Activity.RESULT_OK) {
+                r.data().data?.let {
+                    loadMusic(it)
+                }
+            }
+        }
+    }
+
+    /**
+     * btn: close music and release
+     */
+    private val onBtnCloseClicked: (View) -> Unit = {
+        showAlert("Close", "Sure to close music?", "Close", { _, _ ->
+            mediaPresenter.release()
+            initView(false)
+        }, "Cancel", { _, _ -> })
+    }
+
+    /**
+     * act: activity destroy, release
+     */
+    override fun onDestroy() {
+        mediaPresenter.release()
+        (application as MyApplication).clearObject()
+        super.onDestroy()
+    }
+
+    /**
+     * act: pause
+     */
+    override fun onPause() { // hide or locked
+        super.onPause()
+        mediaPresenter.pause()
+    }
+
+    /**
+     * btn: switch player
+     */
+    private val onBtnSwitchClicked: (View) -> Unit = {
+        mediaPresenter.switch()
+    }
+
+    /**
+     * seekbar change
+     */
     private val onSeekBarChange = object : SeekBar.OnSeekBarChangeListener {
 
         override fun onStartTrackingTouch(seekBar: SeekBar?) = mediaPresenter.seekStart()
@@ -161,26 +195,24 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) = mediaPresenter.seekChanging(progress)
     }
 
-    override fun onPause() { // hide or locked
-        super.onPause()
-        mediaPresenter.pause()
-    }
-
-    override fun onDestroy() {
-        mediaPresenter.release()
-        (application as MyApplication).clearObject()
-        super.onDestroy()
-    }
-
+    /**
+     * view: setup seekbar
+     */
     override fun setupSeekbar(progress: Int, max: Int) {
         seekbar.progress = progress
         seekbar.max = max
     }
 
+    /**
+     * view: update seekbar
+     */
     override fun updateSeekbar(now: String, total: String) {
         txt_music.text = "$now / $total"
     }
 
+    /**
+     * view: setup btn icon
+     */
     override fun switchBtnIcon(isPlaying: Boolean) {
         if (isPlaying) {
             btn_switch.setImageResource(R.drawable.ic_pause_accent_24dp)
@@ -191,97 +223,20 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
 
     // endregion
 
-    override fun loadTags(metadata: Metadata) {
-        edt_title.setText(metadata.title)
-        edt_artist.setText(metadata.artist)
-        edt_album.setText(metadata.album)
-        edt_year.setText(metadata.year)
-        edt_track.setText(metadata.track)
-        edt_genre.setText(metadata.genre.toString())
-        edt_album_artist.setText(metadata.albumArtist)
-        edt_composer.setText(metadata.composer)
-    }
+    // region tags
 
+    /**
+     * btn: restore tag
+     */
     private val onBtnRestoreClicked: (View) -> Unit = {
         showAlert("Check", "Sure to restore?", posText = "Restore", posListener = { _, _ ->
             tagsPresenter.restore()
         }, negText = "Cancel")
     }
 
-    // region Cover
-
     /**
-     * !!!
+     * btn: save tags
      */
-    override fun loadCover(cover: Bitmap?) {
-        if (cover != null) {
-            iv_cover.setImageBitmap(cover)
-            btn_options.isEnabled = true
-            txt_cover_size.text = "${cover.width} x ${cover.height}"
-        } else {
-            iv_cover.setImageResource(R.color.transparent)
-            btn_options.isEnabled = false
-            txt_cover_size.text = "Blank"
-        }
-    }
-
-    private val onMenuRemoveCoverClicked: () -> Unit = {
-        iv_cover.setImageResource(android.R.color.transparent)
-        btn_options.isEnabled = false
-        txt_cover_size.text = "Blank"
-    }
-
-    private val onBtnChooseCoverClicked: (View) -> Unit = {
-        RxActivityResult.on(this).startIntent(openImageIntent()).subscribe { r ->
-            if (r.resultCode() == Activity.RESULT_OK) {
-                r.data().data?.let {
-                    val bm = ImageUtil.getBitmapFromUri(contentResolver, it)
-                    loadCover(bm)
-                }
-            }
-        }
-    }
-
-    private val onMenuCropCoverClicked: () -> Unit = a@{
-        val intent = Intent(this, CropActivity::class.java)
-        val cover = ImageUtil.getBitmapFromImageView(iv_cover)
-        if (cover == null) {
-            showAlert("Failed", "Failed to get cover the image.")
-            return@a
-        }
-        (application as MyApplication).setObject(cover)
-        try {
-            RxActivityResult.on(this).startIntent(intent).subscribe { r ->
-                if (r.resultCode() == Activity.RESULT_OK) {
-                    val bm = (application as MyApplication).getObject() as? Bitmap
-                    loadCover(bm)
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    private val onMenuSaveCoverClicked: () -> Unit = {
-        showAlert("Save", "Save cover?", posText = "Save", posListener = a@{ _, _ ->
-            val cover = ImageUtil.getBitmapFromImageView(iv_cover)
-            if (cover == null) {
-                showAlert("Failed", "Failed to get the cover.")
-                return@a
-            }
-            val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
-            try {
-                val path = ImageUtil.saveImage(this, contentResolver, cover, desc, desc)
-                showToast("Save path in $path success")
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                showAlert("Failed", "Failed to save the cover.")
-            }
-        }, negText = "Cancel")
-    }
-
-    // endregion
-
     private val onBtnSaveClicked: (View) -> Unit = {
         val filename = tagsPresenter.getFilename()
         fun save(path: String, fakeName: String = path) {
@@ -315,6 +270,109 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }, negText = "Cancel")
     }
 
+    /**
+     * view: init tags
+     */
+    override fun loadTags(metadata: Metadata) {
+        edt_title.setText(metadata.title)
+        edt_artist.setText(metadata.artist)
+        edt_album.setText(metadata.album)
+        edt_year.setText(metadata.year)
+        edt_track.setText(metadata.track)
+        edt_genre.setText(metadata.genre.toString())
+        edt_album_artist.setText(metadata.albumArtist)
+        edt_composer.setText(metadata.composer)
+    }
+
+    /**
+     * !!! load cover
+     */
+    override fun loadCover(cover: Bitmap?) {
+        if (cover != null) {
+            iv_cover.setImageBitmap(cover)
+            btn_options.isEnabled = true
+            txt_cover_size.text = "${cover.width} x ${cover.height}"
+        } else {
+            iv_cover.setImageResource(R.color.transparent)
+            btn_options.isEnabled = false
+            txt_cover_size.text = "Blank"
+        }
+    }
+
+    /**
+     * menu: remove cover
+     */
+    private val onMenuRemoveCoverClicked: () -> Unit = {
+        iv_cover.setImageResource(android.R.color.transparent)
+        btn_options.isEnabled = false
+        txt_cover_size.text = "Blank"
+    }
+
+    /**
+     * btn: replace cover
+     */
+    private val onBtnReplaceCoverClicked: (View) -> Unit = {
+        RxActivityResult.on(this).startIntent(openImageIntent()).subscribe { r ->
+            if (r.resultCode() == Activity.RESULT_OK) {
+                r.data().data?.let {
+                    val bm = ImageUtil.getBitmapFromUri(contentResolver, it)
+                    loadCover(bm)
+                }
+            }
+        }
+    }
+
+    /**
+     * menu: crop cover
+     */
+    private val onMenuCropCoverClicked: () -> Unit = a@{
+        val intent = Intent(this, CropActivity::class.java)
+        val cover = ImageUtil.getBitmapFromImageView(iv_cover)
+        if (cover == null) {
+            showAlert("Failed", "Failed to get cover the image.")
+            return@a
+        }
+        (application as MyApplication).setObject(cover)
+        try {
+            RxActivityResult.on(this).startIntent(intent).subscribe { r ->
+                if (r.resultCode() == Activity.RESULT_OK) {
+                    val bm = (application as MyApplication).getObject() as? Bitmap
+                    loadCover(bm)
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    /**
+     * menu: save cover
+     */
+    private val onMenuSaveCoverClicked: () -> Unit = {
+        showAlert("Save", "Save cover?", posText = "Save", posListener = a@{ _, _ ->
+            val cover = ImageUtil.getBitmapFromImageView(iv_cover)
+            if (cover == null) {
+                showAlert("Failed", "Failed to get the cover.")
+                return@a
+            }
+            val desc = "${tagsPresenter.getFilenameWithoutExt()}_cover"
+            try {
+                val path = ImageUtil.saveImage(this, contentResolver, cover, desc, desc)
+                showToast("Save path in $path success")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showAlert("Failed", "Failed to save the cover.")
+            }
+        }, negText = "Cancel")
+    }
+
+    // endregion
+
+    // region video & ffmpeg
+
+    /**
+     * open video to handle with audio
+     */
     private val onMenuVideoClicked: () -> Unit = {
         RxActivityResult.on(this).startIntent(openVideoIntent()).subscribe { r ->
             if (r.resultCode() == Activity.RESULT_OK) {
@@ -336,12 +394,17 @@ class MainActivity : AppCompatActivity(), IContextHelper, MainActivityContract.V
         }
     }
 
+    /**
+     * open ffmpeg directly
+     */
     private val onMenuFFmpegClicked: () -> Unit = {
         val intent = Intent(this, FFmpegActivity::class.java)
         startActivity(intent)
     }
 
-    // region Permission
+    // endregion
+
+    // region permission
 
     private fun checkPermission() {
         val requirePermission: List<String> = ALL_PERMISSION.filter {

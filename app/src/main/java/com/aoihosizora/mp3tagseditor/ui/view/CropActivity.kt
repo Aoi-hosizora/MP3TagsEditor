@@ -13,10 +13,14 @@ import android.view.View
 import com.aoihosizora.mp3tagseditor.MyApplication
 import com.aoihosizora.mp3tagseditor.R
 import com.aoihosizora.mp3tagseditor.ui.IContextHelper
+import com.aoihosizora.mp3tagseditor.ui.contract.CropActivityContract
+import com.aoihosizora.mp3tagseditor.ui.presenter.CropActivityPresenter
 import kotlinx.android.synthetic.main.activity_crop.*
 
 
-class CropActivity : AppCompatActivity(), IContextHelper {
+class CropActivity : AppCompatActivity(), IContextHelper, CropActivityContract.View {
+
+    override val presenter = CropActivityPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +48,6 @@ class CropActivity : AppCompatActivity(), IContextHelper {
         toolbar.setOnMenuItemClickListener { onMenuItemClickListener(it) }
     }
 
-    private fun updateScaleSize() {
-        txt_scale_size.text = "Current size: ${iv_crop.cropWindowRect.width().toInt()} x ${iv_crop.cropWindowRect.height().toInt()}"
-    }
-
     private fun onMenuItemClickListener(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_crop -> {
@@ -58,5 +58,12 @@ class CropActivity : AppCompatActivity(), IContextHelper {
             }
         }
         return true
+    }
+
+    /**
+     * update title size
+     */
+    private fun updateScaleSize() {
+        txt_scale_size.text = "Current size: ${iv_crop.cropWindowRect.width().toInt()} x ${iv_crop.cropWindowRect.height().toInt()}"
     }
 }

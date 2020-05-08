@@ -52,6 +52,9 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         return true
     }
 
+    /**
+     * refer path
+     */
     private val onMenuReferenceClicked: () -> Unit = {
         RxActivityResult.on(this).startIntent(openAudioVideoIntent()).subscribe { r ->
             if (r.resultCode() != Activity.RESULT_OK) {
@@ -74,6 +77,9 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         }
     }
 
+    /**
+     * btn: run script
+     */
     private val onBtnRunClicked: (View) -> Unit = {
         val command = edt_command.text.toString()
         if (command.isBlank()) {
@@ -83,6 +89,9 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         }
     }
 
+    /**
+     * view: start run
+     */
     override fun startRun(command: String) {
         view_result.startRun()
 
@@ -91,6 +100,9 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         txt_output.text = ""
     }
 
+    /**
+     * view: finish run
+     */
     override fun finishRun(isSuccess: Boolean, message: String) {
         if (isSuccess) {
             view_result.success()
@@ -102,6 +114,9 @@ class FFmpegActivity : AppCompatActivity(), IContextHelper, FFmpegActivityContra
         btn_run.isEnabled = true
     }
 
+    /**
+     * view: update output
+     */
     override fun updateOutput(content: String) {
         txt_output.append(content)
         val scrollAmount = txt_output.layout.getLineTop(txt_output.lineCount) - txt_output.height

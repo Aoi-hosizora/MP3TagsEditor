@@ -27,16 +27,6 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         initView()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item == null) {
-            return false
-        }
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-        }
-        return true
-    }
-
     private fun initView() {
         txt_filename.text = "Opening: ${presenter.getPath()}"
         txt_output.movementMethod = ScrollingMovementMethod()
@@ -48,6 +38,19 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         btn_help.setOnClickListener(onBtnHelpClicked)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item == null) {
+            return false
+        }
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return true
+    }
+
+    /**
+     * btn: run script
+     */
     private val onBtnRunClicked: (View) -> Unit = {
         val command = edt_command.text.toString()
         if (command.isBlank()) {
@@ -57,19 +60,31 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         }
     }
 
+    /**
+     * btn: copy path
+     */
     private val onBtnCopyClicked: (View) -> Unit = {
         copyText(presenter.getPath())
         showToast("Success to copy")
     }
 
+    /**
+     * btn: open help
+     */
     private val onBtnHelpClicked: (View) -> Unit = {
         openBrowser("http://ffmpeg.org/ffmpeg.html")
     }
 
+    /**
+     * view: set script
+     */
     override fun setScript(command: String) {
         edt_command.setText(command)
     }
 
+    /**
+     * view: start run
+     */
     override fun startRun(command: String) {
         view_result.startRun()
 
@@ -78,6 +93,9 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         txt_output.text = ""
     }
 
+    /**
+     * view: finish run
+     */
     override fun finishRun(isSuccess: Boolean, message: String) {
         if (isSuccess) {
             view_result.success()
@@ -89,6 +107,9 @@ class VideoActivity : AppCompatActivity(), IContextHelper, VideoActivityContract
         btn_run.isEnabled = true
     }
 
+    /**
+     * view: update output
+     */
     override fun updateOutput(content: String) {
         txt_output.append(content)
         val scrollAmount = txt_output.layout.getLineTop(txt_output.lineCount) - txt_output.height
